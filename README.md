@@ -685,7 +685,7 @@ const TodoItem = ({ todo, toggleTodo, editTodo, deleteTodo }: TodoItemProps): JS
   const handleEditSave = (): void => {
     if (editTitle.trim()) {
       editTodo(todo.id, editTitle);
-      setEditTitle('');
+      // setEditTitle('');  // 편집중에 내용 사라짐
       setIsEdit(false);
     }
   };
