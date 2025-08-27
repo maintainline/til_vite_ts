@@ -1,35 +1,17 @@
-# Context API / useReducer 예제
-
-- 시나리오
-  - 쇼핑몰 장바구니, 잔액 관리
-
-## 1. 폴더 및 파일 구조
-
-- /src/context/shop 폴더 생성
-- /src/context/shop/ShopContext.tsx 파일 생성
-
-```tsx
-import React, { createContext, useContext, useReducer, type PropsWithChildren } from 'react';
+import React, { createContext, useContext, useReducer } from 'react';
 
 // 1. 초기값
+type CartType = { id: number; qty: number };
 type GoodType = {
   id: number;
   name: string;
   price: number;
 };
-
-type CartType = {
-  id: number;
-  // quantity(수량) 의 줄임말
-  qty: number;
-};
-
 type ShopStateType = {
   balance: number;
   cart: CartType[];
   goods: GoodType[];
 };
-
 const initialState: ShopStateType = {
   balance: 100000,
   cart: [],
@@ -37,7 +19,7 @@ const initialState: ShopStateType = {
     { id: 1, name: '사과', price: 1000 },
     { id: 2, name: '딸기', price: 30000 },
     { id: 3, name: '바나나', price: 500 },
-    { id: 4, name: '초코렛', price: 5000 },
+    { id: 4, name: '초코렛', price: 8000 },
   ],
 };
 // 2. 리듀서
@@ -53,14 +35,14 @@ type ShopActionRemoveCart = { type: ShopActionType.REMOVE_CART_ONE; payload: { i
 type ShopActionClearCart = { type: ShopActionType.CLEAR_CART_ITEM; payload: { id: number } };
 type ShopActionBuyAll = { type: ShopActionType.BUY_ALL };
 type ShopActionReset = { type: ShopActionType.RESET };
-
 type ShopAction =
   | ShopActionAddCart
   | ShopActionRemoveCart
   | ShopActionClearCart
-  | ShopActionBuyAll
-  | ShopActionReset;
+  | ShopActionReset
+  | ShopActionBuyAll;
 
+// 장바구니 전체 금액계산하기
 // 장바구니 전체 금액 계산하기
 function calcCart(nowState: ShopStateType): number {
   const total = nowState.cart.reduce((sum, 장바구니제품) => {
@@ -78,7 +60,7 @@ function calcCart(nowState: ShopStateType): number {
 function reducer(state: ShopStateType, action: ShopAction) {
   switch (action.type) {
     case ShopActionType.ADD_CART: {
-      const { id } = action.payload; // 제품의 id
+      const { id } = action.payload; // 제품의 ID
       // id 제품이 배열에 있는가? qty 가 있는가?
       const existGood = state.cart.find(item => item.id === id);
       let arr: CartType[] = [];
@@ -86,57 +68,54 @@ function reducer(state: ShopStateType, action: ShopAction) {
         // qty 증가
         arr = state.cart.map(item => (item.id === id ? { ...item, qty: item.qty + 1 } : item));
       } else {
-        // state.cart 새제품 추가 , qty 는 +1
+        // state.cart 에 새 제품 추가, qty 는 1개
         arr = [...state.cart, { id: id, qty: 1 }];
       }
       return { ...state, cart: arr };
     }
-
     case ShopActionType.REMOVE_CART_ONE: {
-      // 제품의 갯수 빼는것
-      const { id } = action.payload; // 1개 빼줄 제품의 id
+      const { id } = action.payload; // 1개 빼줄 제품의 ID
+      // id 제품이 배열에 있는가? qty 가 있는가?
       const existGood = state.cart.find(item => item.id === id);
 
       if (!existGood) {
-        // 제품이 없을때
+        // 제품이 없다면...
         return state;
       }
+
       let arr: CartType[] = [];
       if (existGood.qty > 1) {
         // 제품이 최소 2개 이상이면
         arr = state.cart.map(item => (item.id === id ? { ...item, qty: item.qty - 1 } : item));
       } else {
-        // 제품이 1개 담겼어요.
+        // 제품이 1개
         arr = state.cart.filter(item => item.id !== id);
       }
+
       return { ...state, cart: arr };
     }
-
     case ShopActionType.CLEAR_CART_ITEM: {
-      // 담겨진 제품중에 하나의 제품을 장바구니에서 제거
+      // 담겨진 제품 중에 장바구니에서 제거하기
       const { id } = action.payload;
-      const arr: CartType[] = state.cart.filter(item => item.id !== id);
+      const arr = state.cart.filter(item => item.id !== id);
       return { ...state, cart: arr };
     }
-
     case ShopActionType.BUY_ALL: {
-      // 총 금액 계산
+      // 총 금액계산
       const total = calcCart(state);
       if (total > state.balance) {
-        alert('돈이 부족!, 장바구니를 줄이세요...');
+        alert('돈이 부족합니다. 장바구니를 줄이세요');
         return state;
       }
       return { ...state, balance: state.balance - total, cart: [] };
     }
-
     case ShopActionType.RESET:
       return initialState;
-
     default:
       return state;
   }
 }
-// 3. 컨텍스트
+// 3. 컨텍스트 생성
 type ShopValueType = {
   cart: CartType[];
   goods: GoodType[];
@@ -148,9 +127,8 @@ type ShopValueType = {
   resetCart: () => void;
 };
 const ShopContext = createContext<ShopValueType | null>(null);
-
 // 4. 프로바이더
-export const ShopProvider: React.FC<PropsWithChildren> = ({ children }) => {
+export const ShopProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
   // dispatch 용 함수 표현식
@@ -174,121 +152,19 @@ export const ShopProvider: React.FC<PropsWithChildren> = ({ children }) => {
     cart: state.cart,
     goods: state.goods,
     balance: state.balance,
-    addCart: addCart,
-    removeCartOne: removeCartOne,
-    clearCart: clearCart,
-    buyAll: buyAll,
-    resetCart: resetCart,
+    addCart,
+    removeCartOne,
+    clearCart,
+    buyAll,
+    resetCart,
   };
   return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };
 // 5. 커스텀 훅
-export function useShop(): ShopValueType {
+export function useShop() {
   const ctx = useContext(ShopContext);
   if (!ctx) {
     throw new Error('Shop 컨텍스트가 생성되지 않았습니다.');
   }
   return ctx;
 }
-```
-
-- /src/components/shop 폴더 생성
-
-- /src/components/shop/GoodList.tsx 파일 생성
-
-```tsx
-import React from 'react';
-import { useShop } from '../../contexts/shop/ShopContext';
-
-const GoodList = () => {
-  const { goods, addCart } = useShop();
-
-  return (
-    <div>
-      <h2>GoodList</h2>
-      <ul>
-        {goods.map(item => (
-          <li key={item.id}>
-            <span>{item.name}</span>
-            <span> 가격 : {item.price}</span>
-            <button onClick={() => addCart(item.id)}>담기</button>
-          </li>
-        ))}
-      </ul>
-    </div>
-  );
-};
-
-export default GoodList;
-```
-
-- /src/components/shop/Cart.tsx 파일 생성
-
-```tsx
-import React from 'react';
-import { useShop } from '../../contexts/shop/ShopContext';
-
-const Cart = () => {
-  const { balance, cart, removeCartOne, resetCart, clearCart, buyAll } = useShop();
-  return (
-    <div>
-      <h2>Cart</h2>
-      <ul>
-        {cart.map(item => (
-          <li key={item.id}>
-            <span>제품명 : 생략</span>
-            <span>구매수 : {item.qty}</span>
-            <button onClick={() => removeCartOne(item.id)}>줄이기</button>
-            <button onClick={() => clearCart(item.id)}>제품 취소</button>
-          </li>
-        ))}
-      </ul>
-      <button onClick={buyAll}>전체 구매하기</button>
-      <button onClick={resetCart}>전체 취소하기</button>
-    </div>
-  );
-};
-
-export default Cart;
-```
-
-- /src/components/shop/Wallet.tsx 파일 생성
-
-```tsx
-import React from 'react';
-import { useShop } from '../../contexts/shop/ShopContext';
-
-const Wallet = () => {
-  const { balance } = useShop();
-  return <div>Wallet : {balance}</div>;
-};
-
-export default Wallet;
-```
-
-- App.tsx
-
-```tsx
-import React from 'react';
-import GoodList from './components/shop/GoodList';
-import Cart from './components/shop/Cart';
-import Wallet from './components/shop/Wallet';
-import { ShopProvider } from './contexts/shop/ShopContext';
-
-function App() {
-  return (
-    <div>
-      <h1>나의 가게</h1>
-      <ShopProvider>
-        <div>
-          <GoodList />
-          <Cart />
-          <Wallet />
-        </div>
-      </ShopProvider>
-    </div>
-  );
-}
-
-export default App;
-```
