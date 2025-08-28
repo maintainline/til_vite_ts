@@ -22,6 +22,7 @@ const initialState: ShopStateType = {
     { id: 4, name: '초코렛', price: 8000 },
   ],
 };
+
 // 2. 리듀서
 enum ShopActionType {
   ADD_CART = 'ADD_CART',
@@ -42,19 +43,13 @@ type ShopAction =
   | ShopActionReset
   | ShopActionBuyAll;
 
-// 장바구니 전체 금액계산하기
 // 장바구니 전체 금액 계산하기
-function calcCart(nowState: ShopStateType): number {
-  const total = nowState.cart.reduce((sum, 장바구니제품) => {
-    // id를 이용해서 제품 상세 정보 찾기
-    const good = nowState.goods.find(g => g.id === 장바구니제품.id);
-    if (good) {
-      return sum + good.price * 장바구니제품.qty; // 반드시 return
-    }
-    return sum; // good이 없으면 그대로 반환
+// 총액 계산 함수 (state 대신 cart, goods만 받도록)
+function calcTotal(cart: CartType[], goods: GoodType[]): number {
+  return cart.reduce((sum, c) => {
+    const good = goods.find(g => g.id === c.id);
+    return good ? sum + good.price * c.qty : sum;
   }, 0);
-
-  return total;
 }
 
 function reducer(state: ShopStateType, action: ShopAction) {
@@ -102,7 +97,7 @@ function reducer(state: ShopStateType, action: ShopAction) {
     }
     case ShopActionType.BUY_ALL: {
       // 총 금액계산
-      const total = calcCart(state);
+      const total = calcTotal(state.cart, state.goods);
       if (total > state.balance) {
         alert('돈이 부족합니다. 장바구니를 줄이세요');
         return state;
@@ -115,6 +110,7 @@ function reducer(state: ShopStateType, action: ShopAction) {
       return state;
   }
 }
+
 // 3. 컨텍스트 생성
 type ShopValueType = {
   cart: CartType[];
@@ -127,39 +123,41 @@ type ShopValueType = {
   resetCart: () => void;
 };
 const ShopContext = createContext<ShopValueType | null>(null);
-// 4. 프로바이더
-export const ShopProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
-  const [state, dispatch] = useReducer(reducer, initialState);
 
-  // dispatch 용 함수 표현식
-  const addCart = (id: number): void => {
-    dispatch({ type: ShopActionType.ADD_CART, payload: { id } });
-  };
-  const removeCartOne = (id: number): void => {
-    dispatch({ type: ShopActionType.REMOVE_CART_ONE, payload: { id } });
-  };
-  const clearCart = (id: number): void => {
-    dispatch({ type: ShopActionType.CLEAR_CART_ITEM, payload: { id } });
-  };
-  const buyAll = (): void => {
-    dispatch({ type: ShopActionType.BUY_ALL });
-  };
-  const resetCart = (): void => {
-    dispatch({ type: ShopActionType.RESET });
-  };
+// // 4. 프로바이더
+// export const ShopProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
+//   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const value: ShopValueType = {
-    cart: state.cart,
-    goods: state.goods,
-    balance: state.balance,
-    addCart,
-    removeCartOne,
-    clearCart,
-    buyAll,
-    resetCart,
-  };
-  return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
-};
+//   // dispatch 용 함수 표현식
+//   const addCart = (id: number): void => {
+//     dispatch({ type: ShopActionType.ADD_CART, payload: { id } });
+//   };
+//   const removeCartOne = (id: number): void => {
+//     dispatch({ type: ShopActionType.REMOVE_CART_ONE, payload: { id } });
+//   };
+//   const clearCart = (id: number): void => {
+//     dispatch({ type: ShopActionType.CLEAR_CART_ITEM, payload: { id } });
+//   };
+//   const buyAll = (): void => {
+//     dispatch({ type: ShopActionType.BUY_ALL });
+//   };
+//   const resetCart = (): void => {
+//     dispatch({ type: ShopActionType.RESET });
+//   };
+
+//   const value: ShopValueType = {
+//     cart: state.cart,
+//     goods: state.goods,
+//     balance: state.balance,
+//     addCart,
+//     removeCartOne,
+//     clearCart,
+//     buyAll,
+//     resetCart,
+//   };
+//   // return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
+// };
+
 // 5. 커스텀 훅
 export function useShop() {
   const ctx = useContext(ShopContext);
@@ -167,4 +165,15 @@ export function useShop() {
     throw new Error('Shop 컨텍스트가 생성되지 않았습니다.');
   }
   return ctx;
+}
+
+// 6. 추가 커스텀 훅 :  아이템 찾기, 총액
+export function useShopSelectors() {
+  const { goods, cart } = useShop();
+  // 제품 한개 정보 찾기
+  const getGood = (id: number) => goods.find(item => item.id === id);
+  // 총금액
+  const total = calcTotal(cart, goods);
+  // 리턴
+  return { getGood, total };
 }
