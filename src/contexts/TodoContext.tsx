@@ -2,13 +2,12 @@ import React, { createContext, useContext, useReducer, type PropsWithChildren } 
 import type { TodoType } from '../types/TodoType';
 
 // 1. 초기값
-// type TodoType = { id: string; title: string; completed: boolean }; 만들어 둔 type 값 사용하기
 type TodosState = { todos: TodoType[] };
 const initialState: TodosState = {
   todos: [],
 };
 // 2. 리듀서
-// action : {type:"문자열" , payload: 재료}
+// action 은 {type:"문자열", payload: 재료 } 형태
 enum TodoActionType {
   ADD = 'ADD',
   DELETE = 'DELETE',
@@ -17,12 +16,11 @@ enum TodoActionType {
 }
 
 type AddAction = { type: TodoActionType.ADD; payload: { todo: TodoType } };
-type ToggleAction = { type: TodoActionType.TOGGLE; payload: { id: string } };
 type DeleteAction = { type: TodoActionType.DELETE; payload: { id: string } };
+type ToggleAction = { type: TodoActionType.TOGGLE; payload: { id: string } };
 type EditAction = { type: TodoActionType.EDIT; payload: { id: string; title: string } };
 
-// const id : 같은이름 사용으로 스코프 새로 생성해서 묶어주기~
-function reducer(state: TodosState, action: AddAction | ToggleAction | DeleteAction | EditAction) {
+function reducer(state: TodosState, action: AddAction | DeleteAction | ToggleAction | EditAction) {
   switch (action.type) {
     case TodoActionType.ADD: {
       const { todo } = action.payload;
@@ -50,7 +48,7 @@ function reducer(state: TodosState, action: AddAction | ToggleAction | DeleteAct
   }
 }
 // 3. context 생성
-// 만들어진 Context 가 관리하는 value의 모양
+//  만들어진 Context 가 관리하는 Value 의 모양
 type TodoContextValue = {
   todos: TodoType[];
   addTodo: (todo: TodoType) => void;
@@ -58,15 +56,10 @@ type TodoContextValue = {
   deleteTodo: (id: string) => void;
   editTodo: (id: string, editTitle: string) => void;
 };
-
 const TodoContext = createContext<TodoContextValue | null>(null);
 
 // 4. provider 생성
-// type TodoProviderProps = {
-//   children: React.ReactNode;
-// };
-// export const TodoProvider = ({ children }: TodoProviderProps): JSX.Element => {
-// 위와 같은 형태 - React.FC (ver), type Props(ver)
+
 export const TodoProvider: React.FC<PropsWithChildren> = ({ children }): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -84,16 +77,14 @@ export const TodoProvider: React.FC<PropsWithChildren> = ({ children }): JSX.Ele
     dispatch({ type: TodoActionType.EDIT, payload: { id, title: editTitle } });
   };
 
-  //-----value 전달할 값
+  // value 전달할 값
   const value: TodoContextValue = {
     todos: state.todos,
-
     addTodo,
     toggleTodo,
     deleteTodo,
     editTodo,
   };
-
   return <TodoContext.Provider value={value}>{children}</TodoContext.Provider>;
 };
 
@@ -101,7 +92,7 @@ export const TodoProvider: React.FC<PropsWithChildren> = ({ children }): JSX.Ele
 export function useTodos(): TodoContextValue {
   const ctx = useContext(TodoContext);
   if (!ctx) {
-    throw new Error('컨텍스트가 없어요');
+    throw new Error('컨텍스트가 없어요.');
   }
   return ctx;
 }

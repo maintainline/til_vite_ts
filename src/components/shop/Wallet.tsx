@@ -1,10 +1,8 @@
 import React from 'react';
 import { useShop } from '../../features/shop';
-
-const Wallet = () => {
-  //ts
+export const Wallet = () => {
+  // ts 자리
   const { balance } = useShop();
-
   const box: React.CSSProperties = {
     border: '2px solid #eee',
     borderRadius: 12,
@@ -12,18 +10,14 @@ const Wallet = () => {
     marginBottom: 16,
     background: '#fff',
   };
-  //tsx
+  // tsx 자리
   return (
     <div style={box}>
-      <h2>👌 내 지갑</h2>
+      <h2>🎁 내 지갑</h2>
       <div style={{ fontSize: 30 }}>
-        <strong>{balance.toLocaleString()} 원</strong>
+        <strong>{balance.toLocaleString()}원</strong>
       </div>
-      <p style={{ marginTop: 8, color: '#666' }}>
-        장바구니에 담긴 제품을 구매하면 금액이 빠져나가요!
-      </p>
+      <p style={{ marginTop: 8, color: '#666' }}>장바구니에 담긴 제품을 구매하면 여기서 빠져요!</p>
     </div>
   );
 };
-
-export default Wallet;

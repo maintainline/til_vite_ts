@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
-import { useTodos } from '../../contexts/TodoContext';
+import { useState } from 'react';
 import type { TodoType } from '../../types/TodoType';
+import { useTodos } from '../../contexts/TodoContext';
+
 type TodoWriteProps = {
   children?: React.ReactNode;
 };
-
 const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
-  //context 사용
+  // Context 를 사용함.
   const { addTodo } = useTodos();
 
   const [title, setTitle] = useState<string>('');
@@ -14,14 +14,11 @@ const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setTitle(e.target.value);
   };
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === 'Enter') {
-      // 저장하기
       handleSave();
     }
   };
-
   const handleSave = (): void => {
     if (title.trim()) {
       // 업데이트 시키기
@@ -33,7 +30,7 @@ const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
 
   return (
     <div>
-      <h2>할 일 작성</h2>
+      <h2>할일 작성</h2>
       <div>
         <input
           type="text"

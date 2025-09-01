@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTodos } from '../../contexts/TodoContext';
 import type { TodoType } from '../../types/TodoType';
+
 type TodoItemProps = {
   todo: TodoType;
 };
 
 const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
-  // context 사용
   const { toggleTodo, editTodo, deleteTodo } = useTodos();
-
   // 수정중인지
   const [isEdit, setIsEdit] = useState<boolean>(false);
   const [editTitle, setEditTitle] = useState<string>(todo.title);
@@ -23,7 +22,7 @@ const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
   const handleEditSave = (): void => {
     if (editTitle.trim()) {
       editTodo(todo.id, editTitle);
-      // setEditTitle('');
+      // setEditTitle(''); // 필요없음
       setIsEdit(false);
     }
   };

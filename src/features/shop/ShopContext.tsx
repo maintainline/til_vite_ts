@@ -1,11 +1,9 @@
 import React, { createContext, useReducer } from 'react';
+import { ShopActionType, type ShopValueType } from './types';
 import { reducer } from './reducer';
 import { initialState } from './state';
-import { ShopActionType, type ShopValueType } from './types';
 
 export const ShopContext = createContext<ShopValueType | null>(null);
-
-// 4. 프로바이더
 export const ShopProvider: React.FC<React.PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
@@ -36,6 +34,5 @@ export const ShopProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
     buyAll,
     resetCart,
   };
-
-  return <ShopContext.Provider value={value}> {children} </ShopContext.Provider>;
+  return <ShopContext.Provider value={value}>{children}</ShopContext.Provider>;
 };

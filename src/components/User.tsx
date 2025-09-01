@@ -1,11 +1,9 @@
 import { useEffect, useState } from 'react';
-
 type UserProps = {
   children?: React.ReactNode;
   name: string;
   age: number;
 };
-
 export type UserType = {
   name: string;
   age: number;
@@ -18,19 +16,16 @@ const User = ({ name, age }: UserProps): JSX.Element => {
       setUser({ ...user, age: user.age + 1 });
     }
   };
-
   useEffect(() => {
     setUser({ name, age });
   }, []);
-
   return (
     <div>
-      <br />
       <h2>
-        User :
+        User :{' '}
         {user ? (
           <span>
-            {user.name}의 나이는 {user.age}
+            {user.name}님의 나이는 {user.age}살 입니다.
           </span>
         ) : (
           '사용자 정보가 없습니다.'
