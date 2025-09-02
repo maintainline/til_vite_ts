@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import { useTodos } from '../../contexts/TodoContext';
-import type { TodoType } from '../../types/TodoType';
+import type { Todo } from '../../types/TodoType';
+import {
+  updateTodos as updateTodoService,
+  toggleTodo as toggleTodoService,
+  deleteTodos as deleteTodoService,
+} from '../../services/todoServices';
 
 type TodoItemProps = {
-  todo: TodoType;
+  todo: Todo;
 };
 
 const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
@@ -19,7 +24,24 @@ const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
       handleEditSave();
     }
   };
-  const handleEditSave = (): void => {
+
+  // 비동기로 db 에 update 한다.
+  const handleEditSave = async (): Promise<void> => {
+    if (!editTitle.trim()) {
+      alert('제목을 입력하세요.');
+      return;
+    }
+    try {
+      //db의  내용 업데이트
+      const result = await updateTodoService(todo.id, { title: editTitle });
+      if (result) {
+        //context의 state.todos 의 항목 1개의 타이틀 수정
+        editTodo(todo.id, editTitle);
+        setIsEdit(false);
+      }
+    } catch (error) {
+      console.log('데이터 업데이트에 실패하였습니다.');
+    }
     if (editTitle.trim()) {
       editTodo(todo.id, editTitle);
       // setEditTitle(''); // 필요없음
@@ -30,6 +52,31 @@ const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
     setEditTitle(todo.title);
     setIsEdit(false);
   };
+  // 비동기 통신으로 toggle 업데이트
+  const handleToggle = async (): Promise<void> => {
+    try {
+      // db 의 completed 가 업데이트 성공시 Todo 타입 리턴
+      const result = await toggleTodoService(todo.id, !todo.completed);
+      if (result) {
+        // context 의 state.todos 의 1개 항목 completed 업데이트
+        toggleTodo(todo.id);
+      }
+    } catch (error) {
+      console.log('데이터 베이스 toggle 실패!');
+    }
+  };
+  // db 의 데이터 delete
+  const handleDelete = async (): Promise<void> => {
+    try {
+      //db삭제
+      await deleteTodoService(todo.id);
+      //state삭제기능
+      deleteTodo(todo.id);
+    } catch (error) {
+      console.log(`db삭제가 실패하였습니다.`, error);
+    }
+  };
+
   return (
     <li>
       {isEdit ? (
@@ -45,10 +92,10 @@ const TodoItem = ({ todo }: TodoItemProps): JSX.Element => {
         </>
       ) : (
         <>
-          <input type="checkbox" checked={todo.completed} onChange={() => toggleTodo(todo.id)} />
+          <input type="checkbox" checked={todo.completed} onChange={handleToggle} />
           <span>{todo.title}</span>
           <button onClick={() => setIsEdit(true)}>수정</button>
-          <button onClick={() => deleteTodo(todo.id)}>삭제</button>
+          <button onClick={handleDelete}>삭제</button>
         </>
       )}
     </li>
