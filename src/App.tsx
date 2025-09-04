@@ -6,6 +6,7 @@ import SignInPage from './pages/SignInPage';
 import TodosPage from './pages/TodosPage';
 import AuthCallback from './pages/AuthCallback';
 import Protected from './components/Protected';
+import ProfilePage from './pages/ProfilePage';
 
 //-------------메뉴 컴포넌트
 const TopBar = () => {
@@ -16,6 +17,7 @@ const TopBar = () => {
       {user && <Link to="/todos">할일</Link>}
       {!user && <Link to="/signup">회원가입</Link>}
       {!user && <Link to="/signin">로그인</Link>}
+      {user && <Link to="/profile">프로필</Link>}
       {user && <button onClick={signOut}>로그아웃</button>}
     </nav>
   );
@@ -38,6 +40,14 @@ function App() {
               element={
                 <Protected>
                   <TodosPage />
+                </Protected>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <Protected>
+                  <ProfilePage />
                 </Protected>
               }
             />
