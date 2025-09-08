@@ -30,7 +30,7 @@ const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
     }
 
     try {
-      const newTodo: TodoInsert = { title, content };
+      const newTodo = { title, content };
       // supabase 에 데이터를 insert 함
       // insert 결과로 추가가 된  todo 형태를 받아옴
       const result = await createTodos(newTodo);
