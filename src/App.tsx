@@ -8,18 +8,19 @@ import AuthCallback from './pages/AuthCallback';
 import Protected from './components/Protected';
 import ProfilePage from './pages/ProfilePage';
 import AdminPage from './pages/AdminPage';
+import TodosInfinitePage from './pages/TodosInfinitePage';
 
-//-------------메뉴 컴포넌트
 const TopBar = () => {
   const { signOut, user } = useAuth();
   // 관리자인 경우 메뉴 추가로 출력하기
-  // isAdmin 에는 true / false
-  const isAdmin = user?.email === 'wltjs6668@naver.com';
+  // isAdmin 에는 true/false
+  const isAdmin = user?.email === 'tarolong@naver.com';
 
   return (
-    <nav style={{ display: 'flex', gap: 20, justifyContent: 'flex-end', padding: 20 }}>
+    <nav style={{ display: 'flex', gap: 20, justifyContent: 'flex-end', padding: 40 }}>
       <Link to="/">홈</Link>
       {user && <Link to="/todos">할일</Link>}
+      {user && <Link to="/todos-infinite">무한스크롤 할일</Link>}
       {!user && <Link to="/signup">회원가입</Link>}
       {!user && <Link to="/signin">로그인</Link>}
       {user && <Link to="/profile">프로필</Link>}
@@ -51,6 +52,15 @@ function App() {
               }
             />
             <Route
+              path="/todos-infinite"
+              element={
+                <Protected>
+                  <TodosInfinitePage />
+                </Protected>
+              }
+            />
+
+            <Route
               path="/profile"
               element={
                 <Protected>
@@ -58,6 +68,7 @@ function App() {
                 </Protected>
               }
             />
+
             <Route
               path="/admin"
               element={

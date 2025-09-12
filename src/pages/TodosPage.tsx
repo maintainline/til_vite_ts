@@ -1,19 +1,19 @@
-import { useEffect, useState } from 'react';
-import TodoList from '../components/todos/TodoList';
-import TodoWrite from '../components/todos/TodoWrite';
+import React, { useEffect, useState } from 'react';
 import { TodoProvider, useTodos } from '../contexts/TodoContext';
+import TodoWrite from '../components/todos/TodoWrite';
+import TodoList from '../components/todos/TodoList';
 import type { Profile } from '../types/TodoType';
 import { useAuth } from '../contexts/AuthContext';
 import { getProfile } from '../lib/profile';
 import Pagination from '../components/Pagination';
 
-// 컴포넌트는 여기에서~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~(필요시 이동~)
+// 용서하세요. 컴포넌트는 여기서 작성하겠습니다.
+// 필요하시면 이동 부탁합니다.
 interface TodosContentProps {
   currentPage: number;
   itemsPerPage: number;
   handleChangePage: (page: number) => void;
 }
-
 const TodosContent = ({
   currentPage,
   itemsPerPage,
@@ -23,7 +23,8 @@ const TodosContent = ({
   return (
     <div>
       <div>
-        <TodoWrite />
+        {/* 새글 등록시 1페이지로 이동후 목록새로고침 */}
+        <TodoWrite handleChangePage={handleChangePage} />
       </div>
       <div>
         <TodoList />
@@ -41,22 +42,19 @@ const TodosContent = ({
   );
 };
 
-// 컴포넌트는 여기에서~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~(끝)
-
 function TodosPage() {
   const { user } = useAuth();
-  // v페이지 네이션 관련
+
+  // 페이지네이션 관련
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  // const itemsPerPage =10;
-
+  // const itemsPerPage = 10;
   // 페이지 변경 핸들러
   const handleChangePage = (page: number) => {
     setCurrentPage(page);
   };
 
   const [profile, setProfile] = useState<Profile | null>(null);
-
   // 프로필 가져오기
   const loadProfile = async () => {
     try {
@@ -78,7 +76,7 @@ function TodosPage() {
 
   return (
     <div>
-      <h2>{profile?.nickname}할일</h2>
+      <h2>{profile?.nickname}할 일</h2>
       <TodoProvider currentPage={currentPage} limit={itemsPerPage}>
         <TodosContent
           currentPage={currentPage}

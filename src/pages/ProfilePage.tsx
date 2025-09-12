@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState, type ReactEventHandler } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
-import { getProfile, removeAvatar, updateProfile, uploadAuatar } from '../lib/profile';
+import { getProfile, removeAvatar, updateProfile, uploadAvatar } from '../lib/profile';
 import type { Profile, ProfileUpdate } from '../types/TodoType';
 /**
  * 사용자 프로필 페이지
@@ -22,21 +22,19 @@ function ProfilePage() {
   // 회원 닉네임 보관
   const [nickName, setNickName] = useState<string>('');
 
-  //----------사용자 아바타 이미지를 위한 상태관리 start
+  // 사용자 아바타 이미지를 위한 상태관리
   // 이미지 업로드 상태 표현
   const [uploading, setUploading] = useState<boolean>(false);
-  // 미리보기 이미지 url(문자열)
+  // 미리보기 이미지 url (문자열)
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   // 실제 파일 (바이너리)
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // 사용자가 새로운 이미지 선택시 즉, 편집중인 경우 원본 url 보관용 문자열
-  const [originalAvatarUrl, setOriginalAvatarUrl] = useState<string | null>(null);
-  // 이미지 제거 요청 상태 (그러나, 실제 file 제거는 수정확인 버튼 눌렀을 때 처리)
-  const [imageRemovalRequest, setImageRemovalRequest] = useState<boolean>(false);
-  // input type='file' 태그 참조
+  // 사용자가 새로운 이미지 선택시 즉, 편집 중인 경우 원본 URL 보관용 문자열
+  const [originalAvatarUrl, setOriginalAvartarUrl] = useState<string | null>(null);
+  // 이미지 제거 요청 상태(그러나, 실제 file 제거는 수정확인 버튼 눌렀을 때 처리)
+  const [imageRemovalRequest, setImageRemovalReauest] = useState<boolean>(false);
+  // input type="file" 태그 참조
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  //-----------사용자 아바타 이미지를 위한 상태관리 end
 
   // 사용자 프로필 정보 가져오기
   const loadProfile = async () => {
@@ -65,7 +63,8 @@ function ProfilePage() {
       setLoading(false);
     }
   };
-  // 프로필 데어터 업데이트
+
+  // 프로필 데이터 업데이트
   const saveProfile = async () => {
     if (!user) {
       return;
@@ -77,23 +76,22 @@ function ProfilePage() {
     setLoading(true);
 
     try {
-      let imgUrl = originalAvatarUrl; // 원본 이미지 url
+      let imgUrl = originalAvatarUrl; // 원본 이미지 URL
       // 아바타이미지 제거라면
       if (imageRemovalRequest) {
-        //storage 에 실제 이미지를 제거함.
+        // storage 에 실제 이미지를 제거함.
         const success = await removeAvatar(user.id);
         if (success) {
           imgUrl = null;
         } else {
-          alert('이미지 제거에 실패했습니다. 기존이미지가 유지됩니다.');
+          alert('이미지 제거에 실패했습니다. 기존 이미지가 유지 됩니다.');
         }
       } else if (selectedFile) {
         // 새로운 이미지가 업로드 된다면
-        const uploadedImageUrl = await uploadAuatar(selectedFile, user.id);
-
+        const uploadedImageUrl = await uploadAvatar(selectedFile, user.id);
         if (uploadedImageUrl) {
-          // 실제로 업로드 완료후 전달받은 url 문자열을 보관함.
-          //profiles 테이블에 avatar_url 에 넣어줄 문자열
+          // 실제로 업로드 완료 후 전달받은 URL 문자열을 보관함.
+          // profiles 테이블에 avatar_url 에 넣어줄 문자열
           imgUrl = uploadedImageUrl;
         } else {
           alert('이미지 업로드에 실패했습니다. 닉네임만 저장합니다.');
@@ -111,8 +109,8 @@ function ProfilePage() {
       // 업데이트 성공시 초기화 진행
       setPreviewImage(null);
       setSelectedFile(null);
-      setImageRemovalRequest(false);
-      setOriginalAvatarUrl(null);
+      setImageRemovalReauest(false);
+      setOriginalAvartarUrl(null);
       if (fileInputRef.current) {
         fileInputRef.current.value = '';
       }
@@ -125,9 +123,9 @@ function ProfilePage() {
     }
   };
 
-  // 회원 탈퇴
+  // 회원탈퇴
   const handleDeleteUser = () => {
-    const message: string = '🧨❗계정을 완전히 삭제하시겠습니까? \n\n 복구가 불가능 합니다.';
+    const message: string = '😥 계정을 완전히 삭제하시겠습니까? \n\n 복구가 불가능합니다.';
     let isConfirm = false;
     isConfirm = confirm(message);
 
@@ -136,13 +134,12 @@ function ProfilePage() {
     }
   };
 
-  // 이미지 선택 처리(미리보기)
+  // 이미지 파일 선택 처리(미리보기)
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) {
       return;
     }
-
     // 파일 형식 검증
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
     if (!allowedTypes.includes(file.type)) {
@@ -157,7 +154,7 @@ function ProfilePage() {
       return;
     }
 
-    // 미리보기 생성(파일을 글자로 변환한 것 ...)
+    // 미리보기 생성 (파일을 글자로 변환한 것..)
     const reader = new FileReader();
     reader.onload = e => {
       setPreviewImage(e.target?.result as string);
@@ -166,9 +163,8 @@ function ProfilePage() {
 
     setSelectedFile(file);
     // 새 이미지 선택 시 이미지 제거 요청 상태 초기화
-    setImageRemovalRequest(false);
+    setImageRemovalReauest(false);
   };
-
   // 이미지 파일 선택 취소
   const handleCancelUpload = () => {
     setPreviewImage(null);
@@ -177,15 +173,16 @@ function ProfilePage() {
       fileInputRef.current.value = '';
     }
   };
+
   // 이미지 제거 처리
   const handleRemoveImage = () => {
     const ok = confirm('프로필 이미지를 제거하시겠습니까?');
     if (!ok) {
       return;
     }
-    // 즉시 제거하지 않습니다..
+    // 즉시 제거하지 않습니다.
     // 제거하라는 상태만 별도로 관리함.
-    setImageRemovalRequest(true);
+    setImageRemovalReauest(true);
     setPreviewImage(null);
     setSelectedFile(null);
     if (fileInputRef.current) {
@@ -257,10 +254,10 @@ function ProfilePage() {
                 ) : originalAvatarUrl ? (
                   <div>
                     <img src={originalAvatarUrl} />
-                    <p>현재아바타</p>
+                    현재아바타
                   </div>
                 ) : (
-                  <div>이미지 없음, 아바타 이미지를 설정해 보세요</div>
+                  <div>이미지없음, 아바타 이미지를 설정해보세요.</div>
                 )}
               </div>
               <div>
@@ -275,7 +272,7 @@ function ProfilePage() {
               <div>
                 <div>
                   <button disabled={uploading} onClick={() => fileInputRef.current?.click()}>
-                    {uploading ? '업로드 중' : '이미지 선택'}
+                    {uploading ? '업로드 중...' : '이미지 선택'}
                   </button>
                   {previewImage && (
                     <button disabled={uploading} onClick={handleCancelUpload}>
@@ -284,11 +281,16 @@ function ProfilePage() {
                   )}
                   {!previewImage && !imageRemovalRequest && originalAvatarUrl && (
                     <button onClick={handleRemoveImage}>
-                      {uploading ? '처리중' : '이미지 제거'}
+                      {uploading ? '처리 중...' : '이미지 제거'}
                     </button>
                   )}
                   {imageRemovalRequest && (
-                    <button disabled={uploading} onClick={() => setImageRemovalRequest(false)}>
+                    <button
+                      disabled={uploading}
+                      onClick={() => {
+                        setImageRemovalReauest(false);
+                      }}
+                    >
                       제거 취소
                     </button>
                   )}
@@ -300,13 +302,12 @@ function ProfilePage() {
         ) : (
           <>
             <div>닉네임 : {profileData?.nickname}</div>
-
             <div>
               <h4>아바타</h4>
               {profileData?.avatar_url ? (
                 <img src={profileData.avatar_url} />
               ) : (
-                <div>기본 이미지</div>
+                <div>기본이미지</div>
               )}
             </div>
           </>
@@ -320,7 +321,7 @@ function ProfilePage() {
         {edit ? (
           <>
             <button disabled={uploading} onClick={saveProfile}>
-              {uploading ? '저장중...' : ' 수정확인'}
+              {uploading ? '저장 중...' : '수정확인'}
             </button>
             <button
               onClick={() => {
@@ -328,9 +329,11 @@ function ProfilePage() {
                 setNickName(profileData?.nickname || '');
                 setPreviewImage(null);
                 setSelectedFile(null);
-                setImageRemovalRequest(false);
-                setOriginalAvatarUrl(null);
-                if (fileInputRef.current) fileInputRef.current.value = '';
+                setImageRemovalReauest(false);
+                setOriginalAvartarUrl(null);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = '';
+                }
               }}
             >
               수정취소
@@ -341,9 +344,9 @@ function ProfilePage() {
             <button
               onClick={() => {
                 setEdit(true);
-                // 편집 시작시 원본 이미지 uql 저장
-                setOriginalAvatarUrl(profileData?.avatar_url || null);
-                setImageRemovalRequest(false);
+                // 편집 시작 시 원본 이미지 URL 저장
+                setOriginalAvartarUrl(profileData?.avatar_url || null);
+                setImageRemovalReauest(false);
               }}
             >
               정보수정

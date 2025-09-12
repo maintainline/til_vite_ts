@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import type { Todo, TodoInsert } from '../../types/TodoType';
 import { useTodos } from '../../contexts/TodoContext';
-import { createTodos } from '../../services/todoServices';
-import type { TodoInsert } from '../../types/TodoType';
+import { createTodo } from '../../services/todoService';
 
 type TodoWriteProps = {
   children?: React.ReactNode;
+  handleChangePage: (page: number) => void;
 };
-const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
+const TodoWrite = ({ handleChangePage }: TodoWriteProps): JSX.Element => {
   // Context 를 사용함.
   const { addTodo } = useTodos();
 
@@ -21,23 +22,27 @@ const TodoWrite = ({}: TodoWriteProps): JSX.Element => {
       handleSave();
     }
   };
-  //  supabase 에 데이터를 insert 한다. : 비동기
 
+  //  Supabase 에 데이터를 Insert 한다. : 비동기
   const handleSave = async (): Promise<void> => {
     if (!title.trim()) {
-      alert('제목을 입력하세요');
+      alert('제목을 입력하세요.');
       return;
     }
 
     try {
       const newTodo = { title, content };
-      // supabase 에 데이터를 insert 함
-      // insert 결과로 추가가 된  todo 형태를 받아옴
-      const result = await createTodos(newTodo);
+      // Supabase 에 데이터를 Insert 함
+      // Insert 결과로 추가가 된 Todo 형태를 받아옮
+      const result = await createTodo(newTodo);
       if (result) {
-        // context 에 todo type 데이터를 추가해 줌.
+        // Context 에 Todo 타입 데이터를 추가해 줌.
         addTodo(result);
+
+        // 현재 페이지를 1 페이지로 이동
+        handleChangePage(1);
       }
+
       // 현재 Write 컴포넌트 state 초기화
       setTitle('');
       setContent('');

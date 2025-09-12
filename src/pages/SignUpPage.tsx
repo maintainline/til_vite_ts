@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
 import { createProfile } from '../lib/profile';
@@ -7,16 +7,16 @@ import type { ProfileInsert } from '../types/TodoType';
 function SignUpPage() {
   const { signUp } = useAuth();
 
-  const [email, setEamil] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [pw, setPw] = useState<string>('');
 
-  // 추가 정보(닉네임)
+  // 추가 정보 (닉네임)
   const [nickName, setNickName] = useState<string>('');
 
-  const [msg, setMsg] = useState<String>('');
+  const [msg, setMsg] = useState<string>('');
 
-  const handlSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    // 웹 브라우저 갱신 막기
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    // 웹브라우저 갱신 막기
     e.preventDefault();
 
     if (!email.trim()) {
@@ -29,7 +29,7 @@ function SignUpPage() {
       return;
     }
     if (pw.length < 6) {
-      alert('비밀번호는 최소 6자 입력하세요.');
+      alert('비밀번호는 최소 6자입니다.');
       return;
     }
 
@@ -38,40 +38,27 @@ function SignUpPage() {
       return;
     }
 
-    // 회원가입 하기 및 추가 정보 입력하기
+    // 회원가입 및 추가정보 입력하기
     const { error, data } = await supabase.auth.signUp({
-      email: email,
+      email,
       password: pw,
       options: {
         // 회원 가입 후 이메일로 인증 확인시 리다이렉트 될 URL
         emailRedirectTo: `${window.location.origin}/auth/callback`,
-        // 잠시 추가 정보를 보관합니다.
-        // supabase 에서 auth 에는 추가적인 정보를 저장하는 객체가 존재
+        // 잠시 추가정보를 보관합니다.
+        // Supabase 에서 auth 에는 추가적인 정보를 저장하는 객체가 존재
         // 공식적인 명칭이 metadata 라고 합니다.
-        // 이메일 인증 후에 프로필 생성시에 사용하려고 보관
+        // 이메일 인증 후에 프로필 생성 시에 사용하려고 보관
         data: { nickName: nickName },
       },
     });
+
     if (error) {
       setMsg(`회원가입 오류 : ${error}`);
     } else {
-      setMsg('회원가입을 성공했습니다. 이메일 인증 링크를 확인해 주세요. 인증완료후 프로필이 자동으로 생성됩니다.')
-      
-      // // 회원가입 성공했으므로 profiles 도 채워준다.
-      // if (data?.user?.id) {
-      //   // 프로필을 추가한다.
-      //   const newUser: ProfileInsert = { id: data.user.id, nickname: nickName };
-      //   const result = await createProfile(newUser);
-      //   if (result) {
-      //     // 프로필 추가가 성공하면
-      //     setMsg(`회원가입 및 프로필 성공했습니다. 이메일 인증 링크를 확인해 주세요.`);
-      //   } else {
-      //     // 프로필 추가가 실패하면
-      //     setMsg(`회원가입은 성공, 프로필은 생성 실패입니다.`);
-      //   }
-      // } else {
-      //   setMsg(`회원가입이 성공했습니다. 이메일 인증 링크를 확인해 주세요.`);
-      // }
+      setMsg(
+        '회원가입이 성공했습니다. 이메일 인증 링크를 확인해주세요. 인증 완료 후 프로필이 자동으로 생성됩니다.',
+      );
     }
   };
 
@@ -79,11 +66,11 @@ function SignUpPage() {
     <div>
       <h2>Todo 서비스 회원가입</h2>
       <div>
-        <form onSubmit={handlSubmit}>
+        <form onSubmit={handleSubmit}>
           <input
-            type="text"
+            type="email"
             value={email}
-            onChange={e => setEamil(e.target.value)}
+            onChange={e => setEmail(e.target.value)}
             placeholder="이메일"
           />
           <br />

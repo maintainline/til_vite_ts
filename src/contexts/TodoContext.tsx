@@ -5,9 +5,10 @@ import React, {
   useReducer,
   type PropsWithChildren,
 } from 'react';
+
 import type { Todo } from '../types/TodoType';
-// 전체 db 가져오기
-import { getTodos, getTodosPaginated } from '../services/todoServices';
+// 전체 DB 가져오기
+import { getTodos, getTodosPaginated } from '../services/todoService';
 
 // 1. 초기값 형태가 페이지 객체 형태로 추가
 type TodosState = { todos: Todo[]; totalCount: number; totalPages: number; currentPage: number };
@@ -17,7 +18,6 @@ const initialState: TodosState = {
   totalPages: 0,
   currentPage: 1,
 };
-
 // 2. 리듀서
 // action 은 {type:"문자열", payload: 재료 } 형태
 enum TodoActionType {
@@ -25,7 +25,7 @@ enum TodoActionType {
   DELETE = 'DELETE',
   TOGGLE = 'TOGGLE',
   EDIT = 'EDIT',
-  // Supabase todos 의 목록
+  // Supabase todos 의 목록읽기
   SET_TODOS = 'SET_TODOS',
 }
 
@@ -33,16 +33,15 @@ type AddAction = { type: TodoActionType.ADD; payload: { todo: Todo } };
 type DeleteAction = { type: TodoActionType.DELETE; payload: { id: number } };
 type ToggleAction = { type: TodoActionType.TOGGLE; payload: { id: number } };
 type EditAction = { type: TodoActionType.EDIT; payload: { id: number; title: string } };
-
 // Supabase 목록으로 state.todos 배열을 채워라.
-type setTodoAction = {
+type SetTodosAction = {
   type: TodoActionType.SET_TODOS;
   payload: { todos: Todo[]; totalCount: number; totalPages: number; currentPage: number };
 };
 
 function reducer(
   state: TodosState,
-  action: AddAction | DeleteAction | ToggleAction | EditAction | setTodoAction,
+  action: AddAction | DeleteAction | ToggleAction | EditAction | SetTodosAction,
 ) {
   switch (action.type) {
     case TodoActionType.ADD: {
@@ -66,7 +65,7 @@ function reducer(
       const arr = state.todos.map(item => (item.id === id ? { ...item, title } : item));
       return { ...state, todos: arr };
     }
-    // supabase 의 목록읽기
+    // Supabase 에 목록 읽기
     case TodoActionType.SET_TODOS: {
       const { todos, totalCount, totalPages, currentPage } = action.payload;
       return { ...state, todos, totalCount, totalPages, currentPage };
@@ -89,20 +88,17 @@ type TodoContextValue = {
   editTodo: (id: number, editTitle: string) => void;
   loadTodos: (page: number, limit: number) => Promise<void>;
 };
+
 const TodoContext = createContext<TodoContextValue | null>(null);
 
 // 4. provider 생성
-
-// props 정의하기 1번 방법.
+// 1. props 정의하기
 // interface TodoProviderProps {
-//   children: React.ReactNode;
+//   children?: React.ReactNode;
 //   currentPage?: number;
 //   limit?: number;
 // }
-
-// props 정의하기 2번 방법.(문법 사용)
 interface TodoProviderProps extends PropsWithChildren {
-  children: React.ReactNode;
   currentPage?: number;
   limit?: number;
 }
@@ -128,7 +124,7 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({
   const editTodo = (id: number, editTitle: string) => {
     dispatch({ type: TodoActionType.EDIT, payload: { id, title: editTitle } });
   };
-  // 실행시 state { todos }를 업데이트 함
+  // 실행시 state { todos } 를 업데이트함.
   // reducer 함수를 실행함.
   const setTodos = (todos: Todo[], totalCount: number, totalPages: number, currentPage: number) => {
     dispatch({
@@ -136,8 +132,8 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({
       payload: { todos, totalCount, totalPages, currentPage },
     });
   };
-  //Supabase 의 목록 읽기 함수 표현식
-  // 비동기 데이터 베이스 접근
+  // Supabase 의 목록 읽기 함수 표현식
+  // 비동기 데이터베이스 접근
   // const loadTodos = async (): Promise<void> => {
   //   try {
   //     const result = await getTodos();
@@ -146,7 +142,6 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({
   //     console.log(error);
   //   }
   // };
-
   const loadTodos = async (page: number, limit: number): Promise<void> => {
     try {
       const result = await getTodosPaginated(page, limit);
@@ -167,7 +162,7 @@ export const TodoProvider: React.FC<TodoProviderProps> = ({
     }
   };
 
-  // 페이지가 바뀌면 다시 실행하도록 해야한다.
+  // 페이지가 바뀌면 다시 실행하도록 해야 한다.
   useEffect(() => {
     loadTodos(currentPage, limit);
   }, [currentPage, limit]);

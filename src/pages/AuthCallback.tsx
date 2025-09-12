@@ -1,18 +1,18 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { ProfileInsert } from '../types/TodoType';
 import { createProfile } from '../lib/profile';
-/*
-- 인증 콜백 URL 처리
-- 사용자에게 인증 진행 상태 안내
-- 자동인증 처리 완료 안내
-*/
 
+/**
+ * - 인증 콜백 URL 처리
+ * - 사용자에게 인증 진행 상태 안내
+ * - 자동 인증 처리 완료 안내
+ */
 function AuthCallback() {
-  const [msg, setMsg] = useState<string>('인증 처리 중...');
+  const [msg, setMsg] = useState<string>('인증 처리 중 ...');
 
-  // 사용자가 이메일 확인 클릭하면 실행되는곳
-  // 인증 정보에 담겨진 nickName 을 알아내서 여기서 profiles 를 추가.
+  // 사용자가 이메일 확인 클릭하면 실행되는 곳
+  // 인증 정보에 담겨진 nickname 을 알아내서 여기서 profiles 를 추가
   const handleAuthCallback = async (): Promise<void> => {
     try {
       // URL에서 세션(웹브라우저 정보시 사라지는 데이터)에 담겨진 정보를 가져옮
@@ -58,8 +58,9 @@ function AuthCallback() {
   };
 
   useEffect(() => {
-    // setTimeout 은 1초뒤에 함수 실행
+    // setTimeout 은 1초 뒤에 함수 실행
     const timer = setTimeout(handleAuthCallback, 1000);
+    // 클린업 함수
     return () => {
       clearTimeout(timer);
     };
