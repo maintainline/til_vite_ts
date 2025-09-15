@@ -46,7 +46,7 @@ function reducer(
   switch (action.type) {
     case TodoActionType.ADD: {
       const { todo } = action.payload;
-      return { ...state, todos: [todo, ...state.todos] };
+      return { ...state, todos: [todo, ...state.todos], totalCount: state.totalCount + 1 };
     }
     case TodoActionType.TOGGLE: {
       const { id } = action.payload;
@@ -63,7 +63,7 @@ function reducer(
     case TodoActionType.EDIT: {
       const { id, title } = action.payload;
       const arr = state.todos.map(item => (item.id === id ? { ...item, title } : item));
-      return { ...state, todos: arr };
+      return { ...state, todos: arr, totalCount: Math.max(0, state.totalCount - 1) };
     }
     // Supabase 에 목록 읽기
     case TodoActionType.SET_TODOS: {
