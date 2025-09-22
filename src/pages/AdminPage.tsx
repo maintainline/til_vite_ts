@@ -13,7 +13,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   // 관리자 확인
-  const isAdmin = user?.email === 'wltjs6668@naver.com';
+  const isAdmin = user?.email === 'z.seon.dev@gmail.com';
   useEffect(() => {
     // console.log(user?.email);
     // console.log(user?.id);

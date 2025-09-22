@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
+import KakaoLoginButton from '../components/KakaoLoginButton';
 
 function SignUpPage() {
   const { signUp } = useAuth();
@@ -104,6 +105,16 @@ function SignUpPage() {
             회원가입
           </button>
         </form>
+
+        {/* sns 로그인 영역 */}
+        <div style={{ display: 'flex', alignItems: 'center', margin: 'var(--space-6)' }}>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--gray-300)' }} />
+          <span style={{ padding: '0 var(--space-4)', fontSize: '14px' }}>또는</span>
+          <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--gray-300)' }} />
+        </div>
+
+        <KakaoLoginButton onError={error => setMsg(`카카오 로그인 오류 : ${error}`)} />
+
         {/* 메세지 출력 */}
         {msg && (
           <p
