@@ -1,18 +1,20 @@
 import { Link, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import HomePage from './pages/HomePage';
-import SignUpPage from './pages/SignUpPage';
-import SignInPage from './pages/SignInPage';
-import TodosPage from './pages/TodosPage';
-import AuthCallback from './pages/AuthCallback';
 import Protected from './components/Protected';
-import ProfilePage from './pages/ProfilePage';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import AdminPage from './pages/AdminPage';
-import TodosInfinitePage from './pages/TodosInfinitePage';
+import AuthCallback from './pages/AuthCallback';
+import HomePage from './pages/HomePage';
+import ProfilePage from './pages/ProfilePage';
+import SignInPage from './pages/SignInPage';
+import SignUpPage from './pages/SignUpPage';
+import TodoDetailPage from './pages/TodoDetailPage';
+import TodoEditPage from './pages/TodoEditPage';
 import TodoListPage from './pages/TodoListPage';
 import TodoWritePage from './pages/TodoWritePage';
-import TodoEditPage from './pages/TodoEditPage';
-import TodoDetailPage from './pages/TodoDetailPage';
+import TodosInfinitePage from './pages/TodosInfinitePage';
+import DirectChatpage from './pages/chat/DirectChatpage';
+// 채팅관련 css
+import './components/chat/chat.css';
 
 const TopBar = () => {
   const { signOut, user } = useAuth();
@@ -43,6 +45,11 @@ const TopBar = () => {
       {!user && (
         <Link to="/signin" className="nav-link">
           로그인
+        </Link>
+      )}
+      {user && (
+        <Link to="/chat" className="nav-link">
+          1:1 채팅
         </Link>
       )}
       {user && (
@@ -139,6 +146,15 @@ function App() {
               element={
                 <Protected>
                   <AdminPage />
+                </Protected>
+              }
+            />
+            {/* 1:1 채팅 */}
+            <Route
+              path="/chat"
+              element={
+                <Protected>
+                  <DirectChatpage />
                 </Protected>
               }
             />
