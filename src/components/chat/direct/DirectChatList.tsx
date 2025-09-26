@@ -28,7 +28,7 @@ const DirectChatList = () => {
                 alt="사용자 닉네임"
               />
               {/* 사용자 아바타 닉네임 출력*/}
-              {/* <div className="avater-placeholder">닉</div> */}
+              {/* <div className="avatar-placeholder">닉</div> */}
             </div>
             {/* 사용자 정보 */}
             <div className="user-info">
