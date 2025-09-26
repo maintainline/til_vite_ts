@@ -1,12 +1,10 @@
-/* 채팅 페이지 전체 컨테이너: 헤더 높이를 제외한 전체화면 높이 사용*/
+/* 채팅 페이지 전체 컨테이너 : 헤더 높이를 제외한 전체 화면 높이 사용 */
 .chat-page {
   height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
-  /* background-color: skyblue; */
 }
-
-/*  메인 채팅 컨테이너 -  사이드바와 채팅방을 나누는 레이아웃 */
+/* 메인 채팅 컨테이너 - 사이드바와 채팅방을 나누는 레이아웃 */
 .chat-container {
   display: flex;
   height: 100%;
@@ -17,25 +15,20 @@
 /* 왼쪽 사이드바 - 채팅 목록과 사용자 검색 영역 */
 .chat-sidebar {
   width: 300px;
-  height: 100%;
   border-right: 1px solid #e0e0e0;
   background-color: #f8f9fa;
   display: flex;
   flex-direction: column;
 }
-/* 오른쪽 메인 - 채팅방 내용 표시 */
+/* 오른쪽 메인 영역 - 채팅방 내용 표시 */
 .chat-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 
-/* ==========================================
-
-              채팅 리스트 영역
-
-============================================= */
+/*  ==== 채팅 리스트 영역 ==== */
 
 /* 채팅 목록 컨테이너 - 세로 방향으로 채팅 목록 표시 */
 .chat-list {
@@ -48,11 +41,11 @@
 /* 채팅 목록 헤더 - 제목과 새 채팅 버튼 */
 .chat-list-header {
   padding: 20px;
-  border-bottom: 1px solid#e0e0e0;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 /* 채팅 목록 제목 스타일 */
 .chat-list-header h2 {
@@ -61,10 +54,10 @@
   font-weight: 600;
   color: #333;
 }
-/* 새채팅 시작 버튼 - 둥근 모서리와 호버 효과 */
+/* 새 채팅 시작 버튼 - 둥근 모서리와 호버 효과 */
 .new-chat-btn {
   background-color: #007bff;
-  color: #fff;
+  color: #ffffff;
   border: none;
   padding: 10px 20px;
   border-radius: 20px;
@@ -74,17 +67,15 @@
   opacity: 0.8;
   transition: all 0.2s ease;
 }
-
 .new-chat-btn:hover {
   opacity: 1;
 }
-
-/* ==== 사용자 검색 영역 ===== */
-/* 사용자 검색 컨테이너- 검색 입력과 결과 표시 */
+/*  ==== 사용자 검색 영역 ==== */
+/* 사용자 검색 컨테이너 - 검색 입력과 결과 표시 */
 .user-search {
   padding: 16px;
   border-bottom: 1px solid #e0e0e0;
-  background-color: #fff;
+  background-color: #ffffff;
 }
 /* 검색 입력 필드 */
 .search-input {
@@ -94,10 +85,9 @@
   border-radius: 4px;
   font-size: 14px;
 }
-
-/* search-result 검색 결과 목록 : 스크롤 가능한 최대 높이 설정*/
+/* 검색 결과 컨테이너 - 스크롤 가능한 최대 높이 설정 */
 .search-result {
-  margin: 8px;
+  margin-top: 8px;
   max-height: 200px;
   overflow-y: auto;
 }
@@ -110,37 +100,37 @@
   border-radius: 4px;
   transition: all 0.2s ease;
 }
-/*  사용자 아이템 호버 효과 */
+/* 사용자 아이템 호버효과 */
 .user-item:hover {
   background-color: #f0f0f0;
 }
 
 /* 사용자 아바타 컨테이너 */
-.user-avater {
+.user-avatar {
   margin-right: 12px;
 }
 /* 사용자 아바타 이미지 - 원형으로 표시 */
-.user-avater img {
+.user-avatar img {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  background-color: #ff9393;
 }
-/* avater-placeholder - 이미지가 없을때 이니셜 표시 */
+/* 아바타 플레이스홀더 - 이미지가 없을 때 이니셜 표시 */
 .avatar-placeholder {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   background-color: #007bff;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
   font-size: 14px;
 }
-/* 사용자 정보 컨테이커 */
+
+/* 사용자 정보 컨테이너 */
 .user-info {
   display: block;
 }
@@ -149,20 +139,21 @@
   font-weight: 500;
   color: #333;
 }
-/* 검색 결과 없음 메세지 */
+/* 검색 결과 없음 메시지 */
 .no-results {
   padding: 16px;
   text-align: center;
   color: #666;
   font-size: 14px;
 }
-/* 채팅 아이템 목록  */
-/* 채팅 아이템 컨테이너- 스크롤 가능한 목록 */
-.chat-itmes {
+
+/*  ==== 채팅 아이템 목록 ==== */
+/* 채팅 아이템 컨테이너 - 스크롤 가능한 목록 */
+.chat-items {
   flex: 1;
   overflow-y: auto;
 }
-/* 채팅방 없을때 */
+/* 채팅방이 없을 떄 표시 */
 .no-chats {
   padding: 32px 16px;
   text-align: center;
@@ -177,21 +168,18 @@
   cursor: pointer;
   border-bottom: 1px solid #f5f5f5;
   transition: all 0.2s ease;
-  background-color: #fff;
+  background-color: #ffffff;
 }
-
 /* 선택된 채팅 아이템 - 파란색 테두리, 오른쪽 테두리 */
 .chat-item.selected {
   background-color: #e3f2fd;
   border-right: 3px solid #007bff;
 }
-
-/* 채팅 상대방 아바타 컨테이너 - 읽지않은 메시비 배치 위치 기준 */
+/* 채팅 상대방 아바타 컨테이너 - 읽지 않은 메시지 배치 위치 기준*/
 .chat-avatar {
   position: relative;
   margin-right: 16px;
 }
-
 .chat-avatar img {
   width: 50px;
   height: 50px;
@@ -199,13 +187,12 @@
   object-fit: cover;
   border: 2px solid #f0f0f0;
 }
-
 .chat-avatar .avatar-placeholder {
   width: 50px;
   height: 50px;
   border-radius: 50%;
   background: linear-gradient(135deg, #007bff, #0056b3);
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -213,46 +200,50 @@
   font-size: 19px;
   border: 2px solid #f0f0f0;
 }
-/*  읽지 않은 메시지 개수 배지 -아바타의 우상단에 표시 */
+/* 읽지 않은 메시지 개수 배지 - 아바타에 우상단에 표시 */
 .unread-badge {
   position: absolute;
   top: -2px;
   right: -2px;
-  background-color: red;
-  color: #fff;
+  background-color: #ff4444;
+  color: #ffffff;
   border-radius: 50%;
-  height: 20px;
   width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 12px;
   font-weight: 600;
 }
-/* 채팅 정보 컨테이너 - 이름, 시간 미리보기*/
+
+/* 채팅 정보 컨테이너 - 이름, 시간, 미리보기*/
 .chat-info {
   flex: 1;
   min-width: 0;
 }
-/* 채팅 헤더 - 이름,시간 양 끝으로 출력 */
+/* 채팅 헤더 - 이름과 시간 양쪽 끝에 배치 */
 .chat-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 4px;
 }
+
 /* 채팅 상대방 이름 */
 .chat-name {
   font-weight: 600;
   color: #333;
   font-size: 14px;
 }
-/* 마지막 메세지 시간 */
+
+/* 마지막 메시지 시간 */
 .chat-time {
   font-size: 12px;
   color: #666;
 }
-/* 마지막 메세지 미리보기- 긴거는 줄임 표시 */
+
+/* 마지막 메시지 미리보기 - 긴 텍스트는 말줄임표 처리 */
 .chat-preview {
   font-size: 13px;
   color: #666;
@@ -260,22 +251,21 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-/* 읽지 않은 메세지 미리보기- 굵은 글씨 */
+
+/* 읽지 않은 메시지 미리보기 - 굵은 글씨 */
 .chat-preview .unread {
   font-weight: 600;
   color: #333;
 }
-/* 메세지가 없는 경우 표시 */
+
+/* 메시지가 없는 경우 표시 */
 .chat-preview .no-message {
   font-style: italic;
   color: #999;
 }
-/* =========================================
 
-        환영 화면 및 상태 메세지
-
-=========================================*/
-/* 환영 화면- 채팅방이 선택되지 않았을때 표시 */
+/*  ==== 환영 화면 및 상태 메시지 ==== */
+/* 환영 화면 - 채팅방이 선택되지 않았을 때 표시 */
 .chat-welcome {
   display: flex;
   align-items: center;
@@ -283,6 +273,7 @@
   height: 100%;
   background-color: #f8f9fa;
 }
+/* 환영 화면 내용 */
 .welcome-content {
   text-align: center;
   color: #666;
@@ -295,37 +286,38 @@
   color: #333;
   font-size: 24px;
 }
-/* 환영화면 설명 텍스트 */
+/* 환영 화면 설명 텍스트 */
 .welcome-content p {
   margin: 8px 0;
   font-size: 14px;
   line-height: 1.5;
 }
+
 /* 기능 안내 박스 */
 .feature-info {
   margin-top: 24px;
   padding: 16px;
-  background-color: #fff;
+  background-color: #ffffff;
   border-radius: 8px;
   border: 1px solid #e0e0e0;
 }
+
 /* 기능 안내 텍스트 */
 .feature-info p {
   margin: 6px 0;
   font-size: 13px;
   color: #555;
 }
-/* =========================================
 
-        채팅방 영역
+/*  ==== 채팅방 영역 ==== */
 
-=========================================*/
-/* 채팅방 컨테이너 - 헤더, 메세지, 입력 영역으로 구성*/
+/* 채팅방 컨테이너 - 헤더, 메시지, 입력 영역으로 구성 */
 .chat-room {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
+
 /* 채팅방 헤더 - 상대방 정보와 채팅 종료 버튼 */
 .chat-room-header {
   display: flex;
@@ -352,35 +344,33 @@
   display: flex;
   gap: 8px;
 }
-/* 채팅 나가기 버튼 */
+/* 채팅 종료 버튼 */
 .exit-chat-btn {
   padding: 8px 16px;
   background-color: #dc3545;
-  color: #fff;
+  color: #ffffff;
   border: none;
   border-radius: 6px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  opacity: 0.8;
+  opacity: 0.8px;
   transition: all 0.2s ease;
 }
 .exit-chat-btn:hover {
   opacity: 1;
 }
 
-/* =========================================
+/*  ==== 채팅방 메시지 영역 ==== */
 
-        채팅방 메세지 영역
-
-=========================================*/
-/* 메세지 컨테이너 - 스크롤 가능한 메세지 목록 */
+/* 메시지 컨테이너 - 스크롤 가능한 메시지 목록 */
 .chat-room-message {
   flex: 1;
   overflow-y: auto;
   padding: 16px;
 }
-/* 메세지가 없을때 표시 */
+
+/* 메시지가 없을 때 표시 */
 .no-message {
   display: flex;
   flex-direction: column;
@@ -390,32 +380,30 @@
   color: #666;
   text-align: center;
 }
-
 .no-message p {
   margin: 8px 0;
   font-size: 14px;
 }
-/*  메세지 그룹 - 같은 날짜의 메세지들은 묶음 */
+
+/* 메시지 그룹 - 같은 날짜의 메시지들은 묶음 */
 .message-group {
   margin-bottom: 24px;
 }
-/* 날짜 구분선 - 메세지 그룹 사이에 날자 표시 */
+
+/* 날짜 구분선 - 메시지 그룹 사이에 날짜 표시 */
 .date-divider {
   text-align: center;
   margin: 16px 0;
   position: relative;
 }
-
-/* 날짜 내용 앞쪽과 뒤쪽에 라인 배치 */
-
+/* 날짜 내용 앞쪽과 뒤쪽에 라인 배치*/
 .date-divider::before {
   content: '';
   position: absolute;
   display: block;
-  width: 50%;
   top: 50%;
   left: 0;
-
+  width: 50%;
   height: 1px;
   background-color: #e0e0e0;
   z-index: 1;
@@ -424,9 +412,9 @@
   content: '';
   position: absolute;
   display: block;
-  width: 50%;
   top: 50%;
   right: 0;
+  width: 50%;
   height: 1px;
   background-color: #e0e0e0;
   z-index: 1;
@@ -441,24 +429,23 @@
   position: relative;
   z-index: 2;
 }
-/* 메세지들 묶음 컨테이너 */
+
+/* 메시지들 묶음 컨테이너 */
 .message-group-container {
   position: relative;
   width: 100%;
   padding: 0 20px;
 }
 
-/* =========================================
+/* ==== 개별 메시지 스타일 ==== */
 
-        개별 메세지 스타일
-
-=========================================*/
-/* 메세지 아이템 기본 레이아웃 */
+/* 메시지 아이템 기본 레이아웃 */
 .message-item {
   display: flex;
   margin-bottom: 12px;
   gap: 8px;
 }
+
 /* 메시지 말풍선 컨테이너 */
 .message-bubble {
   position: relative;
@@ -467,13 +454,12 @@
   max-width: 100%;
 }
 
-/* 메세지 호버시 시간 표시 - 불투명하게*/
-
+/* 메시지 호버시 시간 표시 - 불투명하게 */
 .message-bubble:hover .message-time {
   opacity: 1;
 }
 
-/* 메세지 텍스트 - 말풍선 스타일 */
+/* 메시지 텍스트 - 말풍선 스타일 */
 .message-text {
   padding: 8px 12px;
   border-radius: 18px;
@@ -482,14 +468,15 @@
   word-wrap: break-word;
   position: relative;
 }
-/* 메세지 시간 - 기본적으로 반투명 */
+/* 메시지 시간 - 기본적을 반투명 */
 .message-time {
   font-size: 14px;
   color: #999;
   margin-top: 4px;
   opacity: 0.7;
 }
-/* 나의 메세지 (오른쪽 정렬)- 파란색 말풍선 */
+
+/* 나의 메시지 (오른쪽 정렬) - 파란색 말풍선 */
 .message-item.my-message {
   display: flex;
   justify-content: flex-end;
@@ -498,19 +485,19 @@
   gap: 8px;
 }
 
-/* 나의 메세지 말풍선 - 파란 배경 */
+/* 나의 메시지 말풍선 - 파란색 배경 */
 .my-message .message-text {
   background-color: #007bff;
-  color: #fff;
+  color: #ffffff;
   border-bottom-right-radius: 4px;
 }
 
-/* 나의 메세지 시간 - 오른쪽 정렬  */
+/* 나의 메시지 시간 - 왼쪽 정렬 */
 .my-message .message-time {
   text-align: right;
 }
 
-/* 상대방의 메세지 (왼쪽 정렬) - 회색 말풍선 */
+/* 상대 방의 메시지 (왼쪽 정렬) - 회색 말풍선 */
 .message-item.other-message {
   display: flex;
   justify-content: flex-start;
@@ -520,21 +507,20 @@
   gap: 8px;
 }
 
-/* 상대방의 메세지 말풍선 - 회색 배경 */
+/* 상대방의 메시지 말풍선 - 회색 배경 */
 .other-message .message-text {
   background-color: #f1f3f4;
   color: #333;
   border-bottom-left-radius: 4px;
 }
-
-/* 상대방 메세지 시간 - 왼쪽 정렬  */
+/* 나의 메시지 시간 - 왼쪽 정렬 */
 .other-message .message-time {
   text-align: left;
 }
 
-/*  채팅 룸의 아바타 */
+/* 채팅룸의 아바타 */
 .message-avatar {
-  /* flex 에서 내용이 너비 보다 큰 경우 줄여주는 비율 */
+  /* flex 에서 내용이 너비 보다 큰 경우  줄여주는 비율  */
   flex-shrink: 0;
   margin: 0 4px;
 }
@@ -545,20 +531,17 @@
   border-radius: 50%;
   object-fit: cover;
 }
-
 /* 아바타 닉네임을 별도 설정 가능하도록 */
 .message-avatar .avatar-placeholder {
   width: 32px;
   height: 32px;
   border-radius: 50%;
   font-size: 12px;
-  color: #fff;
+  color: #ffffff;
 }
-/* =========================================
 
-        메시지 입력 영역
+/* ==== 메시지 입력 영역 ==== */
 
-=========================================*/
 /* 메시지 입력 컨테이너 - 하단 고정 */
 .message-input {
   border-top: 1px solid #e0e0e0;
