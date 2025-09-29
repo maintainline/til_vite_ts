@@ -45,31 +45,31 @@ function DirectChatPage() {
             onCreateChat={handlCreateChat} // 새 채팅방 생성시 호출되는 콜백함수
             selectedChatId={selectedChatId || undefined} // 현재 선택된 채팅방 ID
           />
-          {/* 오른쪽 메인 영역 - 채팅방 또는 환영 화면 표시 */}
-          <div className="chat-main">
-            {/* 선택된 채팅방 ID 유무 */}
-            {selectedChatId ? (
-              //  채팅방이 선택된 경우 : DirectChatRoom
-              <DirectChatRoom />
-            ) : (
-              // 채팅방이 선택되지 않은 경우 : 환영 화면 표시
-              <div className="chat-welcome">
-                {/* 환영 화면 내용 */}
-                <div className="welcome-content">
-                  <h2>1:1 채팅</h2>
-                  <p>좌측에서 채팅방을 선택하거나</p>
-                  <p>새 채팅 버튼을 눌러 대화를 시작하세요.</p>
+        </div>
+        {/* 오른쪽 메인 영역 - 채팅방 또는 환영 화면 표시 */}
+        <div className="chat-main">
+          {/* 선택된 채팅방 ID 유무 */}
+          {selectedChatId ? (
+            //  채팅방이 선택된 경우 : DirectChatRoom
+            <DirectChatRoom />
+          ) : (
+            // 채팅방이 선택되지 않은 경우 : 환영 화면 표시
+            <div className="chat-welcome">
+              {/* 환영 화면 내용 */}
+              <div className="welcome-content">
+                <h2>1:1 채팅</h2>
+                <p>좌측에서 채팅방을 선택하거나</p>
+                <p>새 채팅 버튼을 눌러 대화를 시작하세요.</p>
 
-                  {/* 기능 안내 정보 */}
-                  <div className="feature-info">
-                    <p>💬 실시간 1:1 메시지</p>
-                    <p>👥 사용자 검색 및 초대</p>
-                    <p>📱 반응형 디자인</p>
-                  </div>
+                {/* 기능 안내 정보 */}
+                <div className="feature-info">
+                  <p>💬 실시간 1:1 메시지</p>
+                  <p>👥 사용자 검색 및 초대</p>
+                  <p>📱 반응형 디자인</p>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
