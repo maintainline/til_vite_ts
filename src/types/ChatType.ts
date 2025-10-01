@@ -3,56 +3,55 @@
 // 사용자 정보
 export interface ChatUser {
   id: string; //  사용자 고유 식별자 (uuid)
-  email: string; // 사용자 이메일 주소
+  email?: string; // 사용자 이메일 주소
   nickname: string; // 표시용 닉네임
   avatar_url?: string | null; //  프로필 이미지 URL(선택)
 }
 
-//채팅 정보
-export interface Chat {
+// 1:1 채팅 정보
+export interface DirectChat {
   id: string; // 채팅방 고유 식별자
-  name: string; //  채팅방 이름
-  type: 'direct'; // 채팅방 타입 (direct | group): 현재는 1:1만 지원
-  created_by: string; //  채팅방 생성한 유저의 ID
+  user1_id: string; // 참여자 1 ID
+  user2_id: string; // 참여자 2 ID
   created_at: string; // 생성시간
-  updated_at: string; // 마지막 업데이트 시간
+  last_message_at: string; // 마지막 메세지 시간
+  user1?: ChatUser; // 참여자 1번의 정보
+  user2?: ChatUser; //  참여자 2번의 정보
+  last_message?: DirectMessage; //  마지막 메세지 정보
 }
 
-// 메세지 타입
-export interface Message {
+// 1:1 메세지 타입
+export interface DirectMessage {
   id: string; // 메세지 고유 식별자
   chat_id: string; // 채팅방 아이디
   sender_id: string; // 발신자 사용자 아이디
   content: string; // 메세지 내용
+  is_read: boolean; // 읽음 상태
+  read_at?: string; // 읽은 시간
   created_at: string; //  전송시간
-  updated_at: string; // 수정시간(편집 시)
+  sender?: ChatUser; // 발신자 정보
 }
 
 // 메세지의 상세 추가 확장 정보
-export interface MessageDetail extends Message {
+export interface MessageDetail extends DirectMessage {
   sender: ChatUser;
 }
 
 // 채팅 목록
 export interface ChatListItem {
   id: string; //채팅방 ID
-  name: string; //채팅방 이름
-  type: 'direct'; // 채팅방 타입
-  last_message?: {
-    //마지막 메세지 정보(선택사항)
-    content: string; // 내용
-    create_at: string; // 작성 시간
-    sender_nickname: string; // 보낸사람닉네임
-  };
   other_user: ChatUser; // 상대방 사용자 정보
-  unread_count: number; // 읽지 않은 메세지 수
-  updated_at: string; // 마지막 업데이트 시간
+  last_message?: {
+    content: string; // 마지막 메세지 내용
+    created_at: string; // 작성시간
+    sender_nickname: string; // 보낸사람 닉네임
+  };
+  unread_count: number; // 읽지않은 메세지 수
 }
+
 // 채팅방 생성용
 export interface CreateChatData {
-  name: string; // 채팅방 이름
-  type: 'direct'; // 채팅방 타입('direct' | 'group')
-  participant_id: string; // 참여자 ID
+  participant_id: string; // 상대방 사용자 아이디 ID
 }
 
 // 메세지 전송용
@@ -61,9 +60,30 @@ export interface CreateMessageData {
   content: string; // 메세지 내용
 }
 
+//메세지 읽음 상태 업데이트용
+export interface UpdateMessageReadData {
+  message_id: string; //  메세지 ID
+  user_id: string; // 사용자 ID
+}
+
 //API 응답 래퍼
 export interface ChatApiResponse<T> {
   success: boolean; //성공 여부
   data?: T; // 응답 데이터 (제네릭 타입- 선택적)
   error?: string; //에러메세지 (실패시- 선택적)
+}
+
+// 채팅방 상태 타입
+export interface ChatState {
+  currentChatId?: string; // 현재 활성 채팅방 ID
+  messages: DirectMessage[]; // 메세지 목록
+  loading: boolean; // 로딩상태
+  error?: string; // 에러 메세지
+}
+
+//채팅방 목록 상태 타입
+export interface ChatListState {
+  chats: ChatListItem[]; //채팅방 목록
+  loading: boolean; // 로딩상태
+  error?: string; // 에러메세지
 }

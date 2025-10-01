@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react';
 import { useDirectChat } from '../../../contexts/DirectChatContext';
 import type { ChatUser } from '../../../types/ChatType';
+import { supabase } from '../../../lib/supabase';
 
 // Props 정의
 interface DirectChatListProps {
@@ -28,6 +29,30 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
   useEffect(() => {
     loadChats();
   }, [loadChats]); // 신규 또는 메세지 전송등으로 업데이트 시 채팅 목록 호출
+
+  // supabase realtime 으로 실시간 동기화..
+  useEffect(() => {
+    const subscription = supabase
+      .channel('direct_chats_changes') // direct_chats_changes 라는 이름으로 채널을 만든다.
+      .on(
+        'postgres_changes', // postgreSQL 데이터 베이스의 변경사항을 알려주는 이벤트 명
+        {
+          event: '*', // 모든 이벤트 타입을 감지함. (INSERT,UPDATE,DELETE ...)
+          schema: 'public', // 스키마가 public 인것이 대상
+          table: 'direct_chats', // 변경이 감시되어질 테이블 명
+        },
+        payload => {
+          // 변경사항에 대한 상세정보(새로운 데이터, 이전 데이터 등...)
+          loadChats(); // 변경사항이 있을 때만 새로고침
+        },
+      )
+      .subscribe(); // 구독을 신청한다. (addEventlistener 처럼..)
+    // 클린업 함수 : 컴포넌트가 언마운트 될때, 즉 화면에서 사라질때 실행..
+    return () => {
+      //구독 해제
+      subscription.unsubscribe(); // 반드시 해줌. 메모리 누수 방지, 백엔드 부하
+    };
+  }, [loadChats]);
 
   // 컴포넌트가 변경시 사용자 검색 즉시 실행
   // 검색어가 비어있지 않을 때만 검색 수행
@@ -75,7 +100,7 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
     // 상대방의 id 를 이용해서 채팅방을 생성해야 합니다.
     const chatId = await createDirectChat(user.id);
     if (chatId) {
-      onChatSelect(user.id); //새로운 채팅방 생성
+      onChatSelect(chatId); // 생성된 채팅방 ID를 전달.
       setShowUserSearch(false); // 사용자 검색 ui   숨기기
       setSerchTerm(''); // 검색어 초기화
     }
@@ -186,7 +211,7 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
                 <div className="chat-header">
                   <div className="chat-name">{chat.other_user.nickname}</div>
                   <div className="chat-time">
-                    {chat.last_message ? formatTime(chat.last_message.create_at) : ''}
+                    {chat.last_message ? formatTime(chat.last_message.created_at) : ''}
                   </div>
                 </div>
                 {/* 마지막 메시지 미리보기 */}
