@@ -10,10 +10,10 @@ import SignUpPage from './pages/SignUpPage';
 import TodoDetailPage from './pages/TodoDetailPage';
 import TodoEditPage from './pages/TodoEditPage';
 import TodoListPage from './pages/TodoListPage';
-import TodoWritePage from './pages/TodoWritePage';
 import TodosInfinitePage from './pages/TodosInfinitePage';
-import DirectChatpage from './pages/chat/DirectChatpage';
-// 채팅관련 css
+import TodoWritePage from './pages/TodoWritePage';
+import DirectChatPage from './pages/chat/DirectChatPage';
+// 1:1 채팅 관련 css
 import './components/chat/chat.css';
 import { DirectChatProider } from './contexts/DirectChatContext';
 
@@ -21,7 +21,7 @@ const TopBar = () => {
   const { signOut, user } = useAuth();
   // 관리자인 경우 메뉴 추가로 출력하기
   // isAdmin 에는 true/false
-  const isAdmin = user?.email === 'wltjs6668@naver.com';
+  const isAdmin = user?.email === 'tarolong@naver.com';
 
   return (
     <nav className="nav">
@@ -50,7 +50,7 @@ const TopBar = () => {
       )}
       {user && (
         <Link to="/chat" className="nav-link">
-          1:1 채팅
+          1 : 1 채팅
         </Link>
       )}
       {user && (
@@ -79,7 +79,7 @@ function App() {
       <AuthProvider>
         <div className="container">
           <div className="page-header">
-            <h1 className="page-title">📃Todo Service</h1>
+            <h1 className="page-title">👩‍🦰 Todo Service</h1>
           </div>
           <Router
             future={{
@@ -151,12 +151,12 @@ function App() {
                   </Protected>
                 }
               />
-              {/* 1:1 채팅 */}
+              {/* 1 : 1 채팅 페이지 */}
               <Route
                 path="/chat"
                 element={
                   <Protected>
-                    <DirectChatpage />
+                    <DirectChatPage />
                   </Protected>
                 }
               />

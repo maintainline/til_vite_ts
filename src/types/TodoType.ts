@@ -1,8 +1,4 @@
 export type TodoType = { id: string; title: string; completed: boolean };
-// 메모
-export type Memo = Database['public']['Tables']['memos']['Row'];
-export type MemoInsert = Database['public']['Tables']['memos']['Insert'];
-export type MemoUpdate = Database['public']['Tables']['memos']['Update'];
 
 // 개발자가 직접 작성해 줌.
 export type Todo = Database['public']['Tables']['todos']['Row'];

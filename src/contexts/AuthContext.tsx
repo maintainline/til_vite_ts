@@ -21,27 +21,22 @@ type AuthContextType = {
   signUp: (email: string, password: string) => Promise<{ error?: string }>;
   // 회원 로그인 함수(이메일, 비밀번호) : 비동기라서
   signIn: (email: string, password: string) => Promise<{ error?: string }>;
-
   // 이메일 중복 확인 함수
   checkEmailExists: (email: string) => Promise<{ exists: boolean; error?: string }>;
   // 닉네임 중복 확인 함수
   checkNicknameExists: (nickname: string) => Promise<{ exists: boolean; error?: string }>;
-  //-----------------------카카오 구글 로그인 ------------------------------
   // 카카오 로그인 함수
   signInWithKakao: () => Promise<{ error?: string }>;
-  // 카카오 계정 연동 해제 함수
-  unlinkKakaoAccount: () => Promise<{ error?: string; success?: boolean; message?: string }>;
-
   // 구글 로그인 함수
   signInWithGoogle: () => Promise<{ error?: string }>;
+  // 카카오 계정 연동 해제 함수
+  unlinkKakaoAccount: () => Promise<{ error?: string; success?: boolean; message?: string }>;
   // 구글 계정 연동 해제 함수
   unlinkGoogleAccount: () => Promise<{ error?: string; success?: boolean; message?: string }>;
-
   // 비밀번호 변경 함수
   changePassword: (
     newPassword: string,
   ) => Promise<{ error?: string; success?: boolean; message?: string }>;
-  //-----------------------카카오 구글 로그인 ------------------------------
 
   // 회원 로그아웃
   signOut: () => Promise<void>;
@@ -128,35 +123,36 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // 이메일 중복 확인 함수
   // - 회원 가입시에 이메일을 먼저 파악 후, 회원가입 시도
   // - 결과에 따라서 메시지를 다양하게 출력을 한다 라는 시나리오
-  // - 좀 위험한 것은 error.message 를 문자열로 비교한것이 좀 불안함.
+  // - 좀 위험한 것은 error.messge 를 문자열로 비교한 것이 좀 불안함.
+
   const checkEmailExists: AuthContextType['checkEmailExists'] = async email => {
-    //PostgreSQL Function
+    // PostgreSQL Function
     try {
       const { error, data } = await supabase.rpc('check_email_exists', { email_param: email });
+
       if (error) {
-        return { exists: false, error: '이메일 확인 중 오류가 벌생 했습니다.' };
+        return { exists: false, error: '이메일 확인 중 오류가 발생했습니다.' };
       }
       return { exists: data.exists };
     } catch (err) {
-      console.log('이메일 중복확인 오류', err);
+      console.log('이메일 중복 확인 오류', err);
       return { exists: false, error: '이메일 중복 확인 중 오류가 발생했습니다.' };
     }
   };
 
   // 닉네임 중복 확인 함수
   const checkNicknameExists: AuthContextType['checkNicknameExists'] = async nickname => {
-    //PostgreSQL Function
-    //PostgreSQL Function
+    // PostgreSQL Function
     try {
       const { error, data } = await supabase.rpc('check_nickname_exists', {
         nickname_param: nickname,
       });
       if (error) {
-        return { exists: false, error: '닉네임 확인 중 오류가 벌생 했습니다.' };
+        return { exists: false, error: '닉네임 확인 중 오류가 발생했습니다.' };
       }
       return { exists: data.exists };
     } catch (err) {
-      console.log('닉네임 중복확인 오류', err);
+      console.log('닉네임 중복 확인 오류', err);
       return { exists: false, error: '닉네임 중복 확인 중 오류가 발생했습니다.' };
     }
   };
@@ -198,7 +194,7 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   // 카카오 계정 연동 해제 함수
   const unlinkKakaoAccount: AuthContextType['unlinkKakaoAccount'] = async () => {
     try {
-      // 카카오 로그인 사용자 인지 확인
+      // 카카오 로그인 사용자인지 확인
       if (user?.app_metadata.provider !== 'kakao') {
         return { error: '카카오 로그인 사용자가 아닙니다.' };
       }
@@ -211,24 +207,24 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // 사용자의 카카오 identity 찾기 성공
       const { error } = await supabase.auth.unlinkIdentity(kakaoIdentity);
       if (error) {
-        console.log('카카오 계정 연동 해제 실패:', error.message);
-        return { error: '카카오 계정 연동 해제에 실패 하였습니다.' };
+        console.log(' 카카오 계정 연동 해제 실패:', error.message);
+        return { error: '카카오 계정 연동 해제에 실패하였습니다.' };
       }
       // 계정 해제에 성공했다면
       return {
         success: true,
-        message: '카카오 계정 연동이 해제되었습니다. 다시 로그인 해주세요.',
+        message: '카카오 계정 연동이 해제되었습니다. 다시 로그인해주세요.',
       };
     } catch (err) {
       console.log(`카카오 계정 연동 해제 오류 : `, err);
-      return { error: `카카오 계정 연동 해제 중 오류가 발송했습니다.` };
+      return { error: '카카오 계정 연동 해제 중 오류가 발생했습니다.' };
     }
   };
 
   // 구글 계정 연동 해제 함수
   const unlinkGoogleAccount: AuthContextType['unlinkGoogleAccount'] = async () => {
     try {
-      // 구글 로그인 사용자 인지 확인
+      // 구글 로그인 사용자인지 확인
       if (user?.app_metadata.provider !== 'google') {
         return { error: '구글 로그인 사용자가 아닙니다.' };
       }
@@ -241,35 +237,36 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
       // 사용자의 구글 identity 찾기 성공
       const { error } = await supabase.auth.unlinkIdentity(googleIdentity);
       if (error) {
-        console.log('구글 계정 연동 해제 실패:', error.message);
-        return { error: '구글 계정 연동 해제에 실패 하였습니다.' };
+        console.log(' 구글 계정 연동 해제 실패:', error.message);
+        return { error: '구글 계정 연동 해제에 실패하였습니다.' };
       }
       // 계정 해제에 성공했다면
       return {
         success: true,
-        message: '구글 계정 연동이 해제되었습니다. 다시 로그인 해주세요.',
+        message: '구글 계정 연동이 해제되었습니다. 다시 로그인해주세요.',
       };
     } catch (err) {
       console.log(`구글 계정 연동 해제 오류 : `, err);
-      return { error: `구글 계정 연동 해제 중 오류가 발송했습니다.` };
+      return { error: '구글 계정 연동 해제 중 오류가 발생했습니다.' };
     }
   };
 
-  // 비밀 번호 변경 함수
+  // 비밀번호 변경 함수
   const changePassword: AuthContextType['changePassword'] = async (newPassword: string) => {
     try {
-      // 이메일로그인 사용자인지 확인
+      // 이메일 로그인 사용자인지 확인
       if (user?.app_metadata.provider && user.app_metadata.provider !== 'email') {
-        return { error: '이메일 로그인 사용자만 비밀번호를 변경 할 수있습니다.' };
+        return { error: '이메일 로그인 사용자만 비밀번호를 변경할 수 있습니다.' };
       }
       // 비밀번호 길이 확인
       if (newPassword.length < 6) {
         return { error: '비밀번호는 최소 6자 이상이어야 합니다.' };
       }
-      // Supabase 에서 비밀번호 업데이트
+      // Supabase에서 비밀번호 업데이트
       const { error } = await supabase.auth.updateUser({ password: newPassword });
+
       if (error) {
-        console.log('비밀번호 변경 실패 : ', error);
+        console.log('비밀번호 변경 실패: ', error.message);
         return { error: '비밀번호 변경에 실패했습니다.' };
       }
       return {
@@ -277,8 +274,8 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
         message: '비밀번호가 성공적으로 변경되었습니다.',
       };
     } catch (err) {
-      console.log('비밀번호 변경 오류 : ', err);
-      return { error: '비밀 번호 변경 중 오류가 발생했습니다.' };
+      console.log('비밀번호 변경 오류: ', err);
+      return { error: '비밀번호 변경 중 오류가 발생했습니다.' };
     }
   };
 
@@ -345,11 +342,11 @@ export const AuthProvider: React.FC<PropsWithChildren> = ({ children }) => {
   const value: AuthContextType = {
     signUp,
     signIn,
-    signInWithKakao,
-    unlinkKakaoAccount,
     checkEmailExists,
-    signInWithGoogle,
     checkNicknameExists,
+    signInWithKakao,
+    signInWithGoogle,
+    unlinkKakaoAccount,
     unlinkGoogleAccount,
     changePassword,
     signOut,

@@ -82,16 +82,6 @@ function AuthCallback() {
       const accessToken = hashParams.get('access_token');
       const refreshToken = hashParams.get('refresh_token');
 
-      // console.log('OAuth 파라미터:', {
-      //   code: !!code,
-      //   error,
-      //   accessToken: !!accessToken,
-      //   refreshToken: !!refreshToken,
-      //   fullUrl: window.location.href,
-      //   search: window.location.search,
-      //   hash: window.location.hash,
-      // });
-
       if (error) {
         setMsg(`OAuth 오류: ${error}`);
         return;
@@ -158,7 +148,7 @@ function AuthCallback() {
       }
 
       const user = sessionData.session.user;
-      // 카카오 또는 구글로 로그인 했는지 확인 필요 (kakao,google 은 Supabase 에서 정한 글자)
+      // 카카오 또는 구글로 로그인 했는지 확인 필요 (kakao, google 은 Supabase 에서 정한 글자)
       const isKakaoLogin = user.app_metadata.provider === 'kakao';
       const isGoogleLogin = user.app_metadata.provider === 'google';
       const isOAuthLogin = isKakaoLogin || isGoogleLogin;
@@ -170,17 +160,19 @@ function AuthCallback() {
         loginType = '구글 로그인';
       }
 
-      // 카카오 로그인 이메일 중복 확인 (임시 비활성화)
+      // OAuth 로그인 이메일 중복 확인 (임시 비활성화)
       if (isOAuthLogin && user.email) {
-        console.log(`${loginType}- 이메일 중복확인 비활성화`);
+        console.log(`${loginType} - 이메일 중복 확인 비활성화`);
         console.log(user.email);
       }
 
       // 닉네임 추출
       const nickname = extractNickname(user, isOAuthLogin, loginType);
+      console.log('추출된 닉네임:', nickname);
 
       // 프로필 존재 확인
       const existingProfile = await checkExistingProfile(user.id);
+      console.log('기존 프로필:', existingProfile);
 
       if (!existingProfile && nickname) {
         // 프로필 생성

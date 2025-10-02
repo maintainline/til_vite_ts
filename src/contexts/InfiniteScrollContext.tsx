@@ -1,12 +1,20 @@
-import { createContext, useContext, useEffect, useReducer, type PropsWithChildren } from 'react';
 import {
-  createTodo,
-  deleteTodo as deletedServiceTodo,
-  getTodosInfinite,
-  toggleTodo as updateServiceToggleTodo,
-  updateTodo,
-} from '../services/todoService';
+  act,
+  createContext,
+  useContext,
+  useEffect,
+  useReducer,
+  type PropsWithChildren,
+} from 'react';
 import type { Todo } from '../types/TodoType';
+import {
+  getTodosInfinite,
+  updateTodo,
+  toggleTodo as updatedServiceToggleTodo,
+  deleteTodo as deletedServiceTodo,
+  createTodo,
+} from '../services/todoService';
+import { supabase } from '../lib/supabase';
 
 // 1. 초기값
 type InfiniteScrollState = {
@@ -200,6 +208,11 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
 
   // 데이터 더 보기 기능
   const loadMoreTodos = async (): Promise<void> => {
+    // 이미 로딩 중이거나 더 이상 불러올 데이터가 없으면 중단
+    if (state.loadingMore || !state.hasMore) {
+      return;
+    }
+
     try {
       dispatch({ type: InfiniteScrollActionType.SET_LOADING_MORE, payload: true });
       const result = await getTodosInfinite(state.todos.length, itemsPerPage);
@@ -212,7 +225,8 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
           user_id: item.user_id,
         })),
       );
-      // 데이터가 실제로 로드되었을때만 상태 업데이트
+
+      // 데이터가 실제로 로드되었을 때만 상태 업데이트
       dispatch({
         type: InfiniteScrollActionType.APPEND_TODOS,
         payload: { todos: result.todos, hasMore: result.hasMore },
@@ -228,13 +242,13 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
     try {
       const result = await createTodo({ title });
       if (!result) {
-        console.log(`글등록에 실패하였습니다.`);
+        console.log('글 등록에 실패하였습니다.');
         return;
       }
-      //DB 업데이트 후 state 업데이트
+      // DB 업데이트 후 State 업데이트
       dispatch({ type: InfiniteScrollActionType.ADD_TODO, payload: { todo: result } });
     } catch (error) {
-      console.log(`새 Todo 등록 오류 ${error}`);
+      console.log(`새 Todo 등록 오류 : ${error} `);
     }
   };
 
@@ -242,20 +256,20 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
   const toggleTodo = async (id: number): Promise<void> => {
     try {
       // 현재 전달된 id 에 해당하는 todo 항목의 completed 를 파악한다.
-      const currnetTodo = state.todos.find(item => item.id === id);
-      if (!currnetTodo) {
-        console.log(`todo를 찾지 못했습니다.`, id);
+      const currentTodo = state.todos.find(item => item.id === id);
+      if (!currentTodo) {
+        console.log('Todo 를 찾지 못했습니다 : ', id);
         return;
       }
-      const result = await updateServiceToggleTodo(id, !currnetTodo.completed);
+      const result = await updatedServiceToggleTodo(id, !currentTodo.completed);
       if (result) {
         // DB 업데이트 후 state 업데이트
         dispatch({ type: InfiniteScrollActionType.TOGGLE_TODO, payload: { id } });
       } else {
-        console.log('할일 상태 업데이트 실패');
+        console.log('할일 상태 업데이트 실패 ');
       }
     } catch (error) {
-      console.log(`상태변경 오류 ${error}`);
+      console.log(`상태변경 오류 : ${error} `);
     }
   };
 
@@ -263,10 +277,10 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
   const deleteTodo = async (id: number): Promise<void> => {
     try {
       await deletedServiceTodo(id);
-      //DB 업데이트 후 state 처리
+      // DB 업데이트 후 state 처리
       dispatch({ type: InfiniteScrollActionType.DELETE_TODO, payload: { id } });
     } catch (error) {
-      console.log(`삭제 오류 ${error}`);
+      console.log(`삭제 오류 : ${error} `);
     }
   };
 
@@ -275,13 +289,13 @@ export const InfiniteScrollProvider: React.FC<InfiniteScrollProviderProps> = ({
     try {
       const updatedTodo = await updateTodo(id, { title });
       if (updatedTodo) {
-        //아래는 그냥 state 만 업데이트 한다. (실제 DB 에 업데이트 하고 ==> state 업데이트)
+        // 아래는 그냥 state 만 업데이트 한다. (실제 DB에 업데이트하고 ==> State)
         dispatch({ type: InfiniteScrollActionType.EDIT_TODO, payload: { id, title } });
       } else {
         console.log('업데이트에 실패하였습니다.');
       }
     } catch (error) {
-      console.log(`업데이트 오류입니다. : ${error}`);
+      console.log(`업데이트 오류 : ${error} `);
     }
   };
 

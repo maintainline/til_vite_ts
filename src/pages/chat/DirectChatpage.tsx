@@ -16,33 +16,34 @@ function DirectChatPage() {
   // 현재 선택된 채팅방의 ID 상태 관리
   const [selectedChatId, setSelectedChatId] = useState<string | null>('');
 
-  /*
-  채팅방 선택 처리 함수
-- DirectChatList 에서 목록 중  채팅방 1개를 선택하면 호출됨
-- 선택된 채팅방 ID 를 상태에 보관함
-  */
-
+  /**
+   * 채팅방 선택 처리 함수
+   *
+   * DirectChatList 에서 목록 중 채팅방 1개를 선택하면 호출됨
+   * 선택된 채팅방 ID 를 상태에 보관함.
+   */
   const handleChatSelect = (chatId: string) => {
     setSelectedChatId(chatId);
   };
 
   /**
    * 새로운 채팅 생성 처리 함수
+   *
    * DirectChatList 에서 새 채팅 버튼 클릭시 호출
    */
-  const handlCreateChat = () => {
-    // 새로운 채팅방 생성 처리
+  const handleCreateChat = () => {
+    // 새로운 채팅 방 생성 처리
   };
 
   return (
     <div className="chat-page">
       {/* 메인 채팅 컨테이너 - 사이드바와 메인 영역으로 구성 */}
       <div className="chat-container">
-        {/* 왼쪽 사이드바 - 채팅 목록 표시 */}
+        {/* 왼쪽 사이드바 - 채팅 목록 표시   */}
         <div className="chat-sidebar">
           <DirectChatList
-            onChatSelect={handleChatSelect} // 채팅방 선택시 호출되는 콜백함수
-            onCreateChat={handlCreateChat} // 새 채팅방 생성시 호출되는 콜백함수
+            onChatSelect={handleChatSelect} // 채팅방 선택시 호출되는 콜백 함수
+            onCreateChat={handleCreateChat} // 새 채팅방 생성시 호출되는 콜백 함수
             selectedChatId={selectedChatId || undefined} // 현재 선택된 채팅방 ID
           />
         </div>

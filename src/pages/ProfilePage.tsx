@@ -3,7 +3,6 @@ import { useAuth } from '../contexts/AuthContext';
 import { getProfile, removeAvatar, updateProfile, uploadAvatar } from '../lib/profile';
 import type { Profile, ProfileUpdate } from '../types/TodoType';
 import Loading from '../components/Loading';
-import { elementClosest } from '@fullcalendar/core/internal';
 
 /**
  * 사용자 프로필 페이지
@@ -12,7 +11,7 @@ import { elementClosest } from '@fullcalendar/core/internal';
  * - 회원탈퇴 기능 : 확인을 거치고 진행하도록
  */
 function ProfilePage() {
-  // 회원 기본 정보 (카카오, 구글 회원탈퇴 추가)
+  // 회원 기본 정보 (카카오, 구글 회원 탈퇴 추가)
   const { user, deleteAccount, unlinkKakaoAccount, unlinkGoogleAccount, changePassword } =
     useAuth();
   // 데이터 가져오는 동안의 로딩
@@ -137,6 +136,7 @@ function ProfilePage() {
     const message =
       '카카오 계정 연동을 해제하시겠습니까? \n\n 연동 해제 후에는 카카오로 다시 로그인 할 수 없습니다.';
     const isConfirm = confirm(message);
+
     if (isConfirm) {
       const result = await unlinkKakaoAccount();
       if (result.success) {
@@ -144,7 +144,25 @@ function ProfilePage() {
         // 연동 해제 후 로그아웃 처리
         window.location.href = '/signin';
       } else if (result.error) {
-        alert(`연동 해제 실패 : ${result.error}`);
+        alert(`연동 해제 실패: ${result.error}`);
+      }
+    }
+  };
+
+  // 구글 계정 연동 해제
+  const handleUnlinkGoogle = async () => {
+    const message =
+      '구글 계정 연동을 해제하시겠습니까? \n\n 연동 해제 후에는 구글로 다시 로그인 할 수 없습니다.';
+    const isConfirm = confirm(message);
+
+    if (isConfirm) {
+      const result = await unlinkGoogleAccount();
+      if (result.success) {
+        alert(result.message);
+        // 연동 해제 후 로그아웃 처리
+        window.location.href = '/signin';
+      } else if (result.error) {
+        alert(`연동 해제 실패: ${result.error}`);
       }
     }
   };
@@ -153,7 +171,7 @@ function ProfilePage() {
   const handlePasswordChange = async () => {
     // 입력값 검증
     if (!newPassword.trim()) {
-      setPasswordMessage('새 비밀번호를 입력해 주세요.');
+      setPasswordMessage('새 비밀번호를 입력해주세요.');
       return;
     }
     if (newPassword.length < 6) {
@@ -161,7 +179,7 @@ function ProfilePage() {
       return;
     }
     if (newPassword !== confirmPassword) {
-      setPasswordMessage('비밀번호가 일지하지 않습ㄴ디ㅏ.');
+      setPasswordMessage('비밀번호가 일치하지 않습니다.');
       return;
     }
     try {
@@ -171,38 +189,21 @@ function ProfilePage() {
         // 폼 초기화
         setNewPassword('');
         setConfirmPassword('');
-        //3초후 메세지 자동 제거
+        // 3초 후 메시지 자동 제거
         setTimeout(() => {
           setPasswordMessage('');
         }, 3000);
       } else if (result.error) {
-        setPasswordMessage(`비밀번호 변경 실패 : ${result.error}`);
+        setPasswordMessage(`비밀번호 변경 실패: ${result.error}`);
       }
     } catch (err) {
-      setPasswordMessage('비밀번호 변경중 오류가 발생했습니다.');
-    }
-  };
-
-  // 구글 계정 연동 해제
-  const handleUnlinkGoogle = async () => {
-    const message =
-      '구글 계정 연동을 해제하시겠습니까? \n\n 연동 해제 후에는 구글로 다시 로그인 할 수 없습니다.';
-    const isConfirm = confirm(message);
-    if (isConfirm) {
-      const result = await unlinkGoogleAccount();
-      if (result.success) {
-        alert(result.message);
-        // 연동 해제 후 로그아웃 처리
-        window.location.href = '/signin';
-      } else if (result.error) {
-        alert(`연동 해제 실패 : ${result.error}`);
-      }
+      setPasswordMessage('비밀번호 변경 중 오류가 발생했습니다.');
     }
   };
 
   // 회원탈퇴
   const handleDeleteUser = () => {
-    // 카카오 / 구글 로그인 사용자 인지 확인
+    // 카카오 또는 구글 로그인 사용자인지 확인
     const isKakaoUser = user?.app_metadata.provider === 'kakao';
     const isGoogleUser = user?.app_metadata.provider === 'google';
 
@@ -281,13 +282,13 @@ function ProfilePage() {
   }, []);
 
   if (loading) {
-    return <Loading message="프로필 정보를 불러오는 중..." size="lg" />;
+    return <Loading message="프로필 정보를 불러오는 중 ..." size="lg" />;
   }
   // error 메시지 출력하기
   if (error) {
     return (
       <div className="card" style={{ textAlign: 'center' }}>
-        <h2 className="page-title">⚠ 프로필 오류</h2>
+        <h2 className="page-title">⚠️ 프로필 오류</h2>
         <div style={{ color: 'var(--gray-600)', marginBottom: 'var(--space-4)' }}>{error}</div>
         <button onClick={loadProfile} className="btn btn-primary">
           재시도
@@ -299,19 +300,19 @@ function ProfilePage() {
   return (
     <div>
       <div className="page-header">
-        <h2 className="page-title">👩 회원정보</h2>
+        <h2 className="page-title">👤 회원정보</h2>
         <p className="page-subtitle">개인 정보를 확인하고 수정하세요.</p>
       </div>
       {/* 사용자 기본 정보 섹션 */}
       <div className="card">
-        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray-800)' }}>❕ 기본 정보</h3>
+        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray--800)' }}>📧 기본 정보</h3>
         {/* 로그인 방식 표시 */}
         <div className="form-group">
           <label className="form-label">로그인 방식</label>
           <div
             style={{
               padding: 'var(--space-3)',
-              backgroundColor: '#fff ',
+              backgroundColor: '#ffffff',
               borderRadius: 'var(--radius-md)',
               color: 'var(--gray-700)',
               display: 'flex',
@@ -395,8 +396,8 @@ function ProfilePage() {
       </div>
       {/* 사용자 추가정보 */}
       <div className="card">
-        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray-800)' }}>
-          👧 사용자 추가 정보
+        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray--800)' }}>
+          👤 사용자 추가 정보
         </h3>
         <div className="form-group">
           <label className="form-label">아이디</label>
@@ -423,7 +424,6 @@ function ProfilePage() {
                 placeholder="닉네임을 입력하세요."
               />
             </div>
-
             {/* 이메일 로그인 사용자에게만 비밀번호 변경 섹션 표시 */}
             {(!user?.app_metadata.provider || user?.app_metadata.provider === 'email') && (
               <div className="form-group">
@@ -433,17 +433,17 @@ function ProfilePage() {
                     type="password"
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
-                    placeholder="새 비밀번호 (최소 6자)"
-                    style={{ flex: 1 }}
+                    placeholder="새 비밀번호(최소 6자)"
                     className="form-input"
+                    style={{ flex: 1 }}
                   />
                   <input
+                    type="password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
-                    type="password"
                     placeholder="비밀번호 확인"
-                    style={{ flex: 1 }}
                     className="form-input"
+                    style={{ flex: 1 }}
                   />
                   <button
                     className="btn btn-primary"
@@ -453,7 +453,7 @@ function ProfilePage() {
                     변경
                   </button>
                 </div>
-                {/* 비밀번호 변경 메세지 */}
+                {/* 비밀번호 변경 메시지 */}
                 {passwordMessage && (
                   <div
                     style={{
@@ -473,9 +473,8 @@ function ProfilePage() {
                 )}
               </div>
             )}
-
             <div className="form-group">
-              <label className="form-label">프로필 사진</label>
+              <label className="form-label">아바타 편집</label>
               <div style={{ marginBottom: 'var(--space-4)' }}>
                 {previewImage ? (
                   <div style={{ textAlign: 'center' }}>
@@ -542,7 +541,7 @@ function ProfilePage() {
                   <div style={{ textAlign: 'center' }}>
                     <img
                       src={originalAvatarUrl}
-                      alt="현재 프로필"
+                      alt="현재 아바타"
                       style={{
                         width: '120px',
                         height: '120px',
@@ -560,7 +559,7 @@ function ProfilePage() {
                         fontWeight: 'bold',
                       }}
                     >
-                      현재 프로필
+                      현재 아바타
                     </p>
                   </div>
                 ) : (
@@ -711,8 +710,8 @@ function ProfilePage() {
                 ) : (
                   <div
                     style={{
-                      width: '220px',
-                      height: '220px',
+                      width: '120px',
+                      height: '120px',
                       backgroundColor: 'var(--gray-50)',
                       borderRadius: '50%',
                       display: 'flex',
@@ -804,6 +803,7 @@ function ProfilePage() {
                 🔗 카카오 연동 해제
               </button>
             )}
+
             {/* 구글 사용자에게만 연동 해제 버튼 표시 */}
             {user?.app_metadata?.provider === 'google' && (
               <button

@@ -158,7 +158,7 @@ function TodoDetailPage() {
             {actionLoading.delete ? '⏳ 삭제 중...' : '🗑️ 삭제'}
           </button>
         </div>
-        {/* 상세 내용 */}
+        {/* 상세내용 */}
         {todo.content && (
           <div
             style={{
@@ -169,6 +169,7 @@ function TodoDetailPage() {
             }}
           >
             <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--gray-700)' }}>상세 내용</h4>
+
             <div
               style={{
                 margin: 0,
@@ -179,7 +180,7 @@ function TodoDetailPage() {
             />
           </div>
         )}
-        {/* 추가 정보 출력 */}
+        {/* 추가정보 출력 */}
         <div
           style={{
             padding: 'var(--space-4)',
@@ -188,7 +189,7 @@ function TodoDetailPage() {
             marginBottom: 'var(--space-4)',
           }}
         >
-          <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--gray-700)' }}>할 일 정보</h4>
+          <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--gray-700)' }}>할일 정보</h4>
           <div
             style={{
               display: 'grid',
@@ -197,19 +198,19 @@ function TodoDetailPage() {
             }}
           >
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성일</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성일 :</span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
-                {todo.created_at ? new Date(todo.created_at).toLocaleString('ko-KR') : '정보없음'}
+                {todo.created_at ? new Date(todo.created_at).toLocaleString('ko-KR') : '정보 없음'}
               </div>
             </div>
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>수정일</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>수정일 : </span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
-                {todo.updated_at ? new Date(todo.updated_at).toLocaleString('ko-KR') : '정보없음'}
+                {todo.updated_at ? new Date(todo.updated_at).toLocaleString('ko-KR') : '정보 없음'}
               </div>
             </div>
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성자</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성자 : </span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
                 {profile?.nickname || user?.email}
               </div>
@@ -219,7 +220,7 @@ function TodoDetailPage() {
 
         <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'center' }}>
           <button className="btn btn-secondary" onClick={() => navigate('/todos')}>
-            🛫 목록으로 돌아가기
+            📋 목록으로 돌아가기
           </button>
         </div>
       </div>

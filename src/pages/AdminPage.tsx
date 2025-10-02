@@ -13,7 +13,7 @@ function AdminPage() {
   const [loading, setLoading] = useState(true);
 
   // 관리자 확인
-  const isAdmin = user?.email === 'wltjs6668@naver.com';
+  const isAdmin = user?.email === 'tarolong@naver.com';
   useEffect(() => {
     // console.log(user?.email);
     // console.log(user?.id);
@@ -109,7 +109,7 @@ function AdminPage() {
   }
   // 2. 로딩중 이라면
   if (loading) {
-    return <Loading message="관리자 데이터를 불러오는 중..." size="lg" />;
+    return <Loading message="관리자데이터를 불러오는 중 ..." size="lg" />;
   }
 
   // tsx 자리
@@ -119,12 +119,12 @@ function AdminPage() {
         <h2 className="page-title">👨‍💼 관리자 페이지</h2>
         <p className="page-subtitle">계정 삭제 요청 관리</p>
       </div>
-      {/* 삭제요청관리 */}
+      {/* 삭제 요청 관리 */}
       <div className="card">
-        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray-600)' }}>
-          {' '}
-          📋삭제 요청 목록
+        <h3 style={{ marginBottom: 'var(--space-4)', color: 'var(--gray-800)' }}>
+          📋 삭제 요청 목록
         </h3>
+
         {deleteRequests.length === 0 ? (
           <div style={{ textAlign: 'center', padding: 'var(--space-8)' }}>
             <div style={{ fontSize: '3rem', marginBottom: 'var(--space-4)' }}>✅</div>
@@ -143,17 +143,17 @@ function AdminPage() {
                 {/* 상세정보 */}
                 <div className="admin-request-details">
                   <div className="admin-detail-row">
-                    <span className="admin-detail-label">사용자 ID :</span>
+                    <span className="admin-detail-label">사용자 ID:</span>
                     <span className="admin-detail-value">{item.user_id}</span>
                   </div>
                   <div className="admin-detail-row">
-                    <span className="admin-detail-label">요청 시간 :</span>
+                    <span className="admin-detail-label">요청시간:</span>
                     <span className="admin-detail-value">
                       {item.requested_at && new Date(item.requested_at).toLocaleString('ko-KR')}
                     </span>
                   </div>
                   <div className="admin-detail-row">
-                    <span className="admin-detail-label">삭제 사유 :</span>
+                    <span className="admin-detail-label">삭제 사유:</span>
                     <span className="admin-detail-value">{item.reason}</span>
                   </div>
                 </div>

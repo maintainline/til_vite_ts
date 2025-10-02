@@ -13,8 +13,7 @@ export const getTodos = async (): Promise<Todo[]> => {
   }
   return data || [];
 };
-
-// todo 목록 조회(id) 를 이용함
+// Todo 목록 조회 (id) 를 이용함
 export const getTodoById = async (id: number): Promise<Todo | null> => {
   try {
     const { data, error } = await supabase.from('todos').select('*').eq('id', id).single();
@@ -23,7 +22,7 @@ export const getTodoById = async (id: number): Promise<Todo | null> => {
     }
     return data;
   } catch (err) {
-    console.log('getTodoById 오류. : ', err);
+    console.log('getTodoById 에러 : ', err);
     return null;
   }
 };

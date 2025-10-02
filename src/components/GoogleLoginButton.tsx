@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 interface GoogleLoginButtonProps {
   children?: React.ReactNode;
   onError?: (error: string) => void;
-  onSuccess?: (massage: string) => void;
+  onSuccess?: (message: string) => void;
 }
 const GoogleLoginButton = ({ onError, onSuccess }: GoogleLoginButtonProps) => {
   // 구글 로그인 사용
@@ -13,14 +13,14 @@ const GoogleLoginButton = ({ onError, onSuccess }: GoogleLoginButtonProps) => {
     try {
       const { error } = await signInWithGoogle();
       if (error) {
-        console.log('구글 로그인 에러 메세지 : ', error);
+        console.log('구글 로그인 에러 메시지 : ', error);
         if (onError) {
           onError(error);
         }
       } else {
         console.log('구글 로그인 성공');
         if (onSuccess) {
-          onSuccess('구글 로그인이 성공하였습니다.');
+          onSuccess('구글 로그인이 성공했습니다.');
         }
       }
     } catch (err) {

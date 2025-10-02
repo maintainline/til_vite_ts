@@ -1,7 +1,7 @@
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
+import { useNavigate, useParams } from 'react-router-dom';
 import type { Profile, Todo } from '../types/TodoType';
-import { useCallback, useEffect, useState } from 'react';
 import { getProfile } from '../lib/profile';
 import { getTodoById, toggleTodo, updateTodo } from '../services/todoService';
 import Loading from '../components/Loading';
@@ -12,14 +12,14 @@ function TodoEditPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
+  const [profile, setProfile] = useState<Profile | null>(null);
   const [todo, setTodo] = useState<Todo | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [loading, setLoading] = useState(true);
-
   // 연속 처리 방지
   const [saving, setSaving] = useState(false);
-  // 토글처리
+  // 토글 처리
   const [toggleLoading, setToggleLoading] = useState(false);
 
   // 이미지 파일 보관
@@ -30,7 +30,6 @@ function TodoEditPage() {
   }, []);
 
   // 사용자 정보
-  const [profile, setProfile] = useState<Profile | null>(null);
   useEffect(() => {
     const loadProfile = async () => {
       if (user?.id) {
@@ -41,7 +40,7 @@ function TodoEditPage() {
     loadProfile();
   }, [user?.id]);
 
-  // todo정보 가져오기..
+  // Todo 정보 가져오기
   useEffect(() => {
     const loadTodo = async () => {
       if (!id) {
@@ -88,13 +87,13 @@ function TodoEditPage() {
       const result = await toggleTodo(todo.id, !todo.completed);
       if (result) {
         setTodo(result);
-        alert(`할 일이 ${result.completed ? '완료' : '진행중'}으로 변경되었습니다..`);
+        alert(`할 일이 ${result.completed ? '완료' : '진행 중'}으로 변경되었습니다.`);
       } else {
-        alert('오류가 발생하였습니다. 잠시 후 다시 시도해 주세요..');
+        alert('오류가 발생하였습니다. 잠시 후 다시 시도해 주세요.');
       }
     } catch (error) {
-      console.log('상태 변경 실패 : ', error);
-      alert('에러가 발생하였습니다.');
+      console.log('상태 변경 실패: ', error);
+      alert('에러가 발생하였습니다');
     } finally {
       setToggleLoading(false);
     }
@@ -122,10 +121,10 @@ function TodoEditPage() {
     try {
       setSaving(true);
 
-      //파일 업데이트 처리
+      // 파일 업데이트 처리
       // 1. 기존의 content 내용을 보관
-      // <img src='blob:~' />  새로이 업로드한 이미지인 경우
-      // <img src='http:// ~' />  기존의 storage 에 있는 경우
+      // <img src="blob:~~`/>  새로이 업로드 한 이미지인 경우
+      // <img src="http://~"   기존의 storage 에 있는 경우
       let finalContent = content;
 
       // 2. blob 파일이 존재한다면
@@ -200,26 +199,27 @@ function TodoEditPage() {
           }
         }
       }
-      // 현재 finalContent 는 많은 내용이 변경 되었음. (기존 파일 삭제 또는 신규 파일 추가)
+
+      // 현재 finalContent 는 많은 내용이 변경되었음. (기존파일 삭제 또는 신규 파일 추가)
       const result = await updateTodo(todo.id, { title, content: finalContent });
       if (result) {
-        alert('할 일이 성공적으로 수정되었습니다..');
+        alert('할 일이 성공적으로 수정되었습니다.');
         navigate('/todos');
       } else {
-        alert('수정중 오류가 발생하였습니다. 잠시 후 다시 시도해 주세요..');
+        alert('수정 중 오류가 발생하였습니다. 잠시 후 다시 시도해주세요.');
       }
     } catch (error) {
-      console.log('수정실패', error);
-      alert('수정에 실패 하였습니다..');
+      console.log('수정 실패 : ', error);
+      alert('수정에 실패하였습니다');
     } finally {
       setSaving(false);
     }
   };
 
   const handleCancel = () => {
-    // 바로 취소하지 않음.. 수정중인게 있으면 알림 띄우고, 없으면 바로 todos 고고.
+    // 바로 취소하지 않음.
     if (title !== todo?.title || content !== (todo?.content || '')) {
-      if (window.confirm('수정중인 내용이 있습니다. 정말 취소하시겠습니까?')) {
+      if (window.confirm('수정 중인 내용이 있습니다. 정말 취소하시겠습니까?')) {
         navigate('/todos');
       }
     } else {
@@ -248,6 +248,7 @@ function TodoEditPage() {
         <h2 className="page-title"> 할 일 수정</h2>
         {profile?.nickname && <p className="page-subtitle">{profile.nickname}님의 할 일</p>}
       </div>
+      {/* 상세 내용 */}
       <div className="card">
         <div className="form-group">
           <label className="form-label">완료 상태</label>
@@ -263,9 +264,9 @@ function TodoEditPage() {
                 opacity: toggleLoading || saving ? 0.6 : 1,
               }}
             />
-            <span>{todo.completed ? '✅ 완료됨' : '⏳ 진행 중'}</span>
+            <span> {todo.completed ? '✅ 완료됨' : '⏳ 진행 중'}</span>
             {toggleLoading && (
-              <span style={{ color: 'var(--gray-500)', fontSize: '14px' }}>처리중...</span>
+              <span style={{ color: 'var(--gray-500)', fontSize: '14px' }}>처리 중...</span>
             )}
           </div>
         </div>
@@ -277,7 +278,7 @@ function TodoEditPage() {
             onChange={handleTitleChange}
             value={title}
             disabled={saving}
-            placeholder="할일을 입력하세요..."
+            placeholder="할 일을 입력하세요."
           />
         </div>
         <div className="form-group">
@@ -287,18 +288,18 @@ function TodoEditPage() {
             onChange={handleContentChange}
             value={content}
             rows={6}
-            placeholder="상세내용을 입력하세요 (선택사항)"
+            placeholder="상세 내용을 입력하세요.(선택사항)"
             disabled={saving}
           /> */}
           <RichTextEditor
             value={content}
             onChange={handleContentChange}
-            placeholder="상세내용을 입력하세요"
+            placeholder="상세 내용을 입력하세요.(선택사항)"
             disabled={saving}
             onImagesChange={handleImageChange}
           />
         </div>
-        {/* 추가 정보 출력 */}
+        {/* 추가정보 출력 */}
         <div
           style={{
             padding: 'var(--space-4)',
@@ -307,7 +308,7 @@ function TodoEditPage() {
             marginBottom: 'var(--space-4)',
           }}
         >
-          <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--gray-700)' }}>할 일 정보</h4>
+          <h4 style={{ margin: '0 0 var(--space-3) 0', color: 'var(--gray-700)' }}>할일 정보</h4>
           <div
             style={{
               display: 'grid',
@@ -316,27 +317,26 @@ function TodoEditPage() {
             }}
           >
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성일</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성일 :</span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
-                {todo.created_at ? new Date(todo.created_at).toLocaleString('ko-KR') : '정보없음'}
+                {todo.created_at ? new Date(todo.created_at).toLocaleString('ko-KR') : '정보 없음'}
               </div>
             </div>
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>수정일</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>수정일 : </span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
-                {todo.updated_at ? new Date(todo.updated_at).toLocaleString('ko-KR') : '정보없음'}
+                {todo.updated_at ? new Date(todo.updated_at).toLocaleString('ko-KR') : '정보 없음'}
               </div>
             </div>
             <div>
-              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성자</span>
+              <span style={{ fontWeight: '500', color: 'var(--gray-600)' }}>작성자 : </span>
               <div style={{ color: 'var(--gray-600)', marginTop: 'var(--space-1)' }}>
                 {profile?.nickname || user?.email}
               </div>
             </div>
           </div>
         </div>
-        {/* 버튼입다. */}
-
+        {/* 버튼들 */}
         <div style={{ display: 'flex', gap: 'var(--space-3)', justifyContent: 'flex-end' }}>
           <button
             className="btn btn-secondary"

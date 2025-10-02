@@ -77,10 +77,10 @@ function TodosPage() {
   return (
     <div>
       <div className="page-header">
-        <h2 className="page-title">🎠 할 일 관리</h2>
+        <h2 className="page-title">🍈 할 일 관리</h2>
         {profile?.nickname && <p className="page-subtitle">{profile.nickname}님의 Todo 관리</p>}
       </div>
-      
+
       <TodoProvider currentPage={currentPage} limit={itemsPerPage}>
         <TodosContent
           currentPage={currentPage}

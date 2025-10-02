@@ -18,11 +18,11 @@ const createProfile = async (newUserProfile: ProfileInsert): Promise<boolean> =>
     // 인증 상태 확인
     const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
     if (sessionError || !sessionData.session) {
-      console.log('프로필 생성 실패 :  인증되지 않은 사용자');
+      console.log('프로필 생성 실패 : 인증되지 않은 사용자');
       return false;
     }
 
-    // 현재 사용자 ID 와 프로필 ID가 일치하는지 확인
+    // 현재 사용자 ID와  프로필 ID가 일치하는지 확인
     if (sessionData.session.user.id !== newUserProfile.id) {
       console.log('프로필 생성 실패 : 사용자 ID 불일치');
       return false;

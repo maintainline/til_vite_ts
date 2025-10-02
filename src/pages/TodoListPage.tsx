@@ -1,19 +1,17 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import Pagination from '../components/Pagination';
-import TodoList from '../components/todos/TodoList';
 import TodoWriteBox from '../components/todos/TodoWriteBox';
 import { useAuth } from '../contexts/AuthContext';
 import { TodoProvider, useTodos } from '../contexts/TodoContext';
 import { getProfile } from '../lib/profile';
 import type { Profile, Todo } from '../types/TodoType';
-import { Link } from 'react-router-dom';
 
-// 컴포넌트 분리용----------------------------------------
+// 용서하세요. 나중에 추출하세요. ^^
 type TodoItemProps = {
   todo: Todo;
   index: number;
 };
-
 const TodoItemBox = ({ todo, index }: TodoItemProps) => {
   const { toggleTodo, editTodo, deleteTodo, currentPage, itemsPerPage, totalCount } = useTodos();
 
@@ -50,9 +48,10 @@ const TodoItemBox = ({ todo, index }: TodoItemProps) => {
     </li>
   );
 };
+
+// 용서하세요. 나중에 추출하세요. ^^
 const TodoListBox = () => {
   const { user } = useAuth();
-
   // 전체 할일 목록 가져오기
   const { todos } = useTodos();
   return (
@@ -63,7 +62,6 @@ const TodoListBox = () => {
     </ul>
   );
 };
-// 컴포넌트 분리용----------------------------------------
 
 interface TodosContentProps {
   profile: Profile | null;
@@ -71,7 +69,6 @@ interface TodosContentProps {
   itemsPerPage: number;
   handleChangePage: (page: number) => void;
 }
-
 const TodosContent = ({
   profile,
   currentPage,
@@ -135,7 +132,7 @@ function TodoListPage() {
   return (
     <div>
       <div className="page-header">
-        <h2 className="page-title">🎠 할 일 관리</h2>
+        <h2 className="page-title">🍈 할 일 관리</h2>
         {profile?.nickname && <p className="page-subtitle">{profile.nickname}님의 Todo 관리</p>}
       </div>
 

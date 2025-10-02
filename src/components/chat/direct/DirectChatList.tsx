@@ -17,40 +17,41 @@ interface DirectChatListProps {
 }
 
 const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectChatListProps) => {
-  // context 활용
+  // Context 활용
   const { loadChats, createDirectChat, error, users, searchUsers, loading, chats } =
     useDirectChat();
 
   // 사용자 검색 상태 관리
-  const [searchTerm, setSerchTerm] = useState<string>(''); // 사용자 검색어
+  const [searchTerm, setSearchTerm] = useState<string>(''); // 사용자 검색어
   const [showUserSearch, setShowUserSearch] = useState<boolean>(false); // 사용자 검색 UI 표시 여부
 
-  // 최초의 컴포넌트 마운트 시 채팅 목록 로드..
+  // 최초에 컴포넌트 마운트시 채팅 목록 로드
   useEffect(() => {
     loadChats();
-  }, [loadChats]); // 신규 또는 메세지 전송등으로 업데이트 시 채팅 목록 호출
+  }, [loadChats]); // 신규 또는 메세지 전송 등으로 업데이트 시 채팅목록 호촐
 
-  // supabase realtime 으로 실시간 동기화..
+  // Supabase Realtime 으로 실시간 동기화
   useEffect(() => {
     const subscription = supabase
       .channel('direct_chats_changes') // direct_chats_changes 라는 이름으로 채널을 만든다.
       .on(
-        'postgres_changes', // postgreSQL 데이터 베이스의 변경사항을 알려주는 이벤트 명
+        'postgres_changes', // PostgreSQL 데이터 베이스의 변경사항을 알려주는 이벤트 명
         {
-          event: '*', // 모든 이벤트 타입을 감지함. (INSERT,UPDATE,DELETE ...)
-          schema: 'public', // 스키마가 public 인것이 대상
-          table: 'direct_chats', // 변경이 감시되어질 테이블 명
+          event: '*', // 모든 이벤트 타입을 감지함. (INSERT, UPDATE, DELETE..)
+          schema: 'public', // 스키마가 public 인 것이 대상
+          table: 'direct_chats', // 변경이 감시되어질 테이블명
         },
         payload => {
-          // 변경사항에 대한 상세정보(새로운 데이터, 이전 데이터 등...)
+          // 변경사항에 대한 상세 정보(새로운 데이터, 이전 데이터등..)
           loadChats(); // 변경사항이 있을 때만 새로고침
         },
       )
-      .subscribe(); // 구독을 신청한다. (addEventlistener 처럼..)
-    // 클린업 함수 : 컴포넌트가 언마운트 될때, 즉 화면에서 사라질때 실행..
+      .subscribe(); // 구독을 신청한다. (addEventListener 처럼)
+
+    // 클린업 함수 : 컴포넌트가 언마운트 될때, 즉, 화면에서 사라질 때 실행
     return () => {
-      //구독 해제
-      subscription.unsubscribe(); // 반드시 해줌. 메모리 누수 방지, 백엔드 부하
+      // 구독 해제
+      subscription.unsubscribe(); // 반드시 해줌. 메모리 누수 방지, 백엔드 부하방지
     };
   }, [loadChats]);
 
@@ -60,7 +61,7 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
     // 사용자 검색어가 만약 있다면
     if (searchTerm.trim()) {
       // console.log('DB 에서 사용자 닉네임을 실시간 검색 함..');
-      //검색어가 입력이 되면 Service 의 사용자 검색 API 를 호출해야한다.
+      // 검색어가 입력이 되면 Service 의 사용자 검색 API 를 호출해야 한다.
       searchUsers(searchTerm);
     }
   }, [searchTerm, searchUsers]);
@@ -88,29 +89,29 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
   };
 
   /**
-   * 사용자 선택시 새 채팅방 생성 및 선택
-   *처리 과정
-   1. 선택된 사용자와 새채팅방 생성
-   2. 생성된 채팅방을 즉시 선택된 것으로 인정
-   3. 사용자 검색ui 숨김
-   4 . 사용자 검색어 초기화
+   * 사용자 선택 시 새 채팅방 생성 및 선택
+   * 처리 과정 :
+   * 1. 선택된 사용자와 새 채팅방 생성
+   * 2. 생성된 채팅방을 즉시 선택된 것으로 인정
+   * 3. 사용자 검색 UI 숨김
+   * 4. 사용자 검색어 초기화
    */
-  const hanldeUserSelect = async (user: ChatUser) => {
-    // 상대방 선택됨
+  const handleUserSelect = async (user: ChatUser) => {
+    // 상대방 선택됨.
     // 상대방의 id 를 이용해서 채팅방을 생성해야 합니다.
     const chatId = await createDirectChat(user.id);
     if (chatId) {
-      onChatSelect(chatId); // 생성된 채팅방 ID를 전달.
-      setShowUserSearch(false); // 사용자 검색 ui   숨기기
-      setSerchTerm(''); // 검색어 초기화
+      onChatSelect(chatId); // 생성된 채팅방 ID를 전달
+      setShowUserSearch(false); // 사용자 검색 UI 숨기기
+      setSearchTerm(''); // 검색어 초기화
     }
   };
 
-  // 에러 상태일 때 에러 메세지 표시
+  // 에러 상태일 때 에러 메시지 표시
   if (error) {
     return (
       <div className="chat-list">
-        <div className="error-message">
+        <div className="error-message ">
           <p>오류 : {error}</p>
           <button onClick={loadChats}>다시 시도</button>
         </div>
@@ -135,24 +136,25 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
           {/* 사용자 검색 필드 */}
           <input
             type="text"
-            value={searchTerm} //사용자 검색어
-            onChange={e => setSerchTerm(e.target.value)} // 사용자 검색어 변경 진행..
+            value={searchTerm} // 사용자 검색어
+            onChange={e => setSearchTerm(e.target.value)} // 사용자 검색어 변경 진행
             placeholder="사용자 검색..."
             className="search-input"
           />
+
           {/* 검색 결과 목록 */}
           <div className="search-result">
             {/* 검색된 사용자 출력 */}
             {users.map(user => (
-              // 사용자중 대화상대를 선택할 수 잇음
-              <div key={user.id} className="user-item" onClick={() => hanldeUserSelect(user)}>
+              // 사용자 중 대화상대를 선택할 수 있음. : handleUserSelect
+              <div key={user.id} className="user-item" onClick={() => handleUserSelect(user)}>
                 {/* 사용자 아바타 */}
                 <div className="user-avatar">
                   {user.avatar_url ? (
-                    //  사용자 아바타 이미지 출력
+                    // 사용자 아바타 이미지 출력
                     <img src={user.avatar_url} alt={user.nickname} />
                   ) : (
-                    //   사용자 아바타 닉네임 출력 : 첫글자만 보여줌
+                    // 사용자 아바타 닉네임 출력 : 첫 글자만 보여줌
                     <div className="avatar-placeholder">{user.nickname.charAt(0)}</div>
                   )}
                 </div>
@@ -163,8 +165,9 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
               </div>
             ))}
           </div>
+
           {/* 검색 결과가 없을 때 표시 */}
-          {/* 사용자 검색어는 있는데 사용자 목록이 없다면*/}
+          {/* 사용자 검색어는 있는데 사용자 목록이 없다면 */}
           {searchTerm && users.length === 0 && (
             <div className="no-results">검색 결과가 없습니다.</div>
           )}
@@ -174,37 +177,36 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
       {/* 채팅 목록 컨테이너 */}
       <div className="chat-items">
         {loading ? (
-          // 로딩 표시
+          // 로딩표시
           <div className="loading">로딩 중...</div>
         ) : chats.length === 0 ? (
-          // 채팅방이 없을 때 안내 메세지
+          // 채팅방이 없을 때 안내 메시지
           <div className="no-chats">
             <p>아직 채팅방이 없습니다.</p>
             <p>새 채팅 버튼을 눌러 대화를 시작하세요!</p>
           </div>
         ) : (
-          //채팅 목록 렌더링
+          // 채팅 목록 렌더링
           chats.map(chat => (
             // 개별 채팅 아이템
             <div
               key={chat.id}
               className={`chat-item ${selectedChatId === chat.id ? 'selected' : ''}`}
-              //기존 채팅방 목록에서 채팅방 선택
+              // 기존 채팅방 목록에서 채팅방 선택
               onClick={() => onChatSelect(chat.id)}
             >
               {/* 채팅 상대방 아바타 */}
               <div className="chat-avatar">
                 {chat.other_user.avatar_url ? (
-                  //상대방 아바타 이미지 있는 경우
+                  // 상대방 아바타 이미지 있는 경우
                   <img src={chat.other_user.avatar_url} alt={chat.other_user.nickname} />
                 ) : (
-                  // 상대방 아바타 이미지가 없는경우
+                  // 상대방 아바타 이미지 없는 경운
                   <div className="avatar-placeholder">{chat.other_user.nickname.charAt(0)}</div>
                 )}
                 {/* 읽지 않은 메시지 개수 배지 */}
                 {chat.unread_count > 0 && <div className="unread-badge">{chat.unread_count}</div>}
               </div>
-
               {/* 채팅 정보 */}
               <div className="chat-info">
                 {/* 채팅 헤더 - 이름과 시간 */}
@@ -217,13 +219,11 @@ const DirectChatList = ({ onChatSelect, onCreateChat, selectedChatId }: DirectCh
                 {/* 마지막 메시지 미리보기 */}
                 <div className="chat-preview">
                   {chat.last_message ? (
-                    //메세지가 있는 경우
                     <span className={chat.unread_count > 0 ? 'unread' : ''}>
-                      {/* 마지막 채팅 작성자 닉네임 :  마지막 채팅 메세지 내용을 출력합니다. */}
+                      {/* 마지막 채팅 작성자 닉네임 : 마지막 채팅 메세지 내용을 출력합니다. */}
                       {chat.last_message.sender_nickname} : {chat.last_message.content}
                     </span>
                   ) : (
-                    //메세지가 없는경우
                     <span className="no-message">메시지가 없습니다.</span>
                   )}
                 </div>

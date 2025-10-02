@@ -1,18 +1,18 @@
 # API 연동
 
-## 1. 테이블 구조와 chatType.ts 간의 구조 비교
+## 1. 테이블 구조와 ChatType.ts 간의 구조 비교
 
-- 많이 수정됨..
+- 많이 수정됨
 
 ```ts
-// 1:1 채팅을 위한 타입
+// 1 : 1 채팅을 위한 타입
 
-// 사용자 정보
+// 채팅 사용자 장보
 export interface ChatUser {
-  id: string; //  사용자 고유 식별자 (uuid)
+  id: string; // 사용자 고유 식별자 (UUID)
   email: string; // 사용자 이메일 주소
   nickname: string; // 표시용 닉네임
-  avatar_url?: string | null; //  프로필 이미지 URL(선택)
+  avatar_url?: string | null; // 프로필 이미지 URL (선택)
 }
 
 // 1:1 채팅 정보
@@ -21,84 +21,84 @@ export interface DirectChat {
   user1_id: string; // 참여자 1 ID
   user2_id: string; // 참여자 2 ID
   created_at: string; // 생성시간
-  last_message_at: string; // 마지막 메세지 시간
+  last_message_at: string; // 마지막 메시지 시간
   user1?: ChatUser; // 참여자 1번의 정보
-  user2?: ChatUser; //  참여자 2번의 정보
-  last_message?: DitrectMessage; //  마지막 메세지 정보
+  user2?: ChatUser; // 참여자 2번의 정보
+  last_message?: DirectMessage; // 마지막 메시지 정보
 }
 
-// 1:1 메세지 타입
-export interface DitrectMessage {
-  id: string; // 메세지 고유 식별자
-  chat_id: string; // 채팅방 아이디
-  sender_id: string; // 발신자 사용자 아이디
-  content: string; // 메세지 내용
+// 1:1 메시지 타입
+export interface DirectMessage {
+  id: string; // 메시지 고유 식별자
+  chat_id: string; // 채팅방 ID
+  sender_id: string; // 발신자 사용자 ID
+  content: string; // 메시지 내용
   is_read: boolean; // 읽음 상태
   read_at?: string; // 읽은 시간
-  created_at: string; //  전송시간
+  created_at: string; // 전송 시간
   sender?: ChatUser; // 발신자 정보
 }
 
-// 메세지의 상세 추가 확장 정보
-export interface MessageDetail extends DitrectMessage {
+// 메시지의 상세 추가 확장 정보
+export interface MessageDetail extends DirectMessage {
   sender: ChatUser;
 }
 
-// 채팅 목록
+// 채팅방 목록 타입
 export interface ChatListItem {
-  id: string; //채팅방 ID
+  id: string; // 채팅방 ID
   other_user: ChatUser; // 상대방 사용자 정보
   last_message?: {
-    content: string; // 마지막 메세지 내용
+    content: string; // 마지막 메시지 내용
     created_at: string; // 작성시간
     sender_nickname: string; // 보낸사람 닉네임
   };
-  unread_count: number; // 읽지않은 메세지 수
+  unread_count: number; // 읽지 않은 메시지 수
 }
 
 // 채팅방 생성용
 export interface CreateChatData {
-  participant_id: string; // 상대방 사용자 아이디 ID
+  participant_id: string; // 상대방 사용자 ID
 }
 
 // 메세지 전송용
 export interface CreateMessageData {
-  chat_id: string; // 채팅방 id
-  content: string; // 메세지 내용
+  chat_id: string; // 채팅방 ID
+  content: string; // 메시지 내용
 }
 
-//메세지 읽음 상태 업데이트용
+// 메세지 읽음 상태 업데이트용
 export interface UpdateMessageReadData {
-  message_id: string; //  메세지 ID
+  message_id: string; // 메시지 ID
   user_id: string; // 사용자 ID
 }
 
-//API 응답 래퍼
+// API 응답 래퍼
 export interface ChatApiResponse<T> {
-  success: boolean; //성공 여부
-  data?: T; // 응답 데이터 (제네릭 타입- 선택적)
-  error?: string; //에러메세지 (실패시- 선택적)
+  success: boolean; // 성공 여부
+  data?: T; // 응답 데이터 (제네릭타입-선택적)
+  error?: string; // 에러메시지 (실패시-선택적)
 }
 
 // 채팅방 상태 타입
 export interface ChatState {
-  currentChatId?: string; // 현재 활성 채팅방 ID
-  messages: DitrectMessage[]; // 메세지 목록
-  loading: boolean; // 로딩상태
-  error?: string; // 에러 메세지
+  currentChatId?: string; // 현재 활성 채탱방 ID
+  messages: DirectMessage[]; // 메시지 목록
+  loading: boolean; // 로딩 상태
+  error?: string; // 에러메시지
 }
 
-//채팅방 목록 상태 타입
+// 채팅방 목록 상태 타입
 export interface ChatListState {
-  chats: ChatListItem[]; //채팅방 목록
-  loading: boolean; // 로딩상태
-  error?: string; // 에러메세지
+  chats: ChatListItem[]; // 채팅방 목록
+  loading: boolean; // 로딩 상태
+  error?: string; // 에러 메시지
 }
 ```
 
 ## 2. API 즉, Service 서비스 실적용 및 변경
 
-- `src/service/chat/directChatService.ts`
+- `/src/services/chat/directChatService.ts`
 
 ```ts
 /**
@@ -584,11 +584,270 @@ export async function exitDirectChat(chatId: string): Promise<ChatApiResponse<bo
 
 - /src/contexts/DirectChatContext.tsx 업데이트
 
+```tsx
+/**
+ * 1 : 1 채팅 Context Provider
+ *  - 1 : 1 채팅 기능 전역 상태 관리
+ *  - 채팅방, 메시지, 사용자 검색 등의 상태와 액션 제공
+ *
+ * 주요 기능
+ *  - 채팅방 목록 관리
+ *  - 메시지 전송 및 조회
+ *  - 사용자 검색
+ *  - 에러 처리
+ *  - 로딩 상태 관리
+ *  - 추후 실시간 채팅 업데이트 필요
+ */
+
+import { createContext, useCallback, useContext, useRef, useState } from 'react';
+import type { ChatListItem, ChatUser, CreateMessageData, DirectMessage } from '../types/ChatType';
+import {
+  getChatList,
+  getMessages,
+  sendMessage as sendMessageService,
+  searchUsers as searchUsersService,
+  findOrCreateDirectChat,
+  exitDirectChat,
+} from '../services/chat/directChatService';
+
+/**
+ * DirectChatContext 의  Context 타입 정의
+ * state 의 모양
+ * action 의 모양
+ */
+interface DirectChatContextType {
+  // state ========================
+  chats: ChatListItem[]; // 채팅방 여러개 관리
+  messages: DirectMessage[]; // 여러 메시지를 관리
+  users: ChatUser[]; // 검색된 여러 사용자
+  currentChat: ChatListItem | null; // 현재 선택된 채팅방 정보
+  loading: boolean; // 로딩 상태 관리
+  error: string | null;
+  // action ========================
+  loadChats: () => Promise<void>; // 채팅 목록 로딩 상태관리
+  loadMessages: (chatId: string) => Promise<void>; // 특정 채팅방의 메시지 조회
+  // 메시지가 제대로 전송되었는지 아닌지 체크를 위해서 boolean 리턴 타입
+  sendMessage: (messageData: CreateMessageData) => Promise<boolean>; // 메시지 전송
+  searchUsers: (searchTerm: string) => Promise<void>; // 검색어(닉네임)롤 사용자 검색
+  createDirectChat: (participantId: string) => Promise<string | null>; // 채팅방 생성 또는 접근
+  exitDirectChat: (chatId: string) => Promise<boolean>; // 채팅방 나가기
+  clearError: () => void; // 에러 상태만 초기화 하기
+}
+// 컨테스트 생성
+const DirectChatContext = createContext<DirectChatContextType | null>(null);
+
+// Provide 의 Props
+interface DirectChatProiderProps {
+  children: React.ReactNode;
+}
+// Provider 생성
+export const DirectChatProider: React.FC<DirectChatProiderProps> = ({ children }) => {
+  // 상태관리
+  const [chats, setChats] = useState<ChatListItem[]>([]);
+  const [messages, setMessages] = useState<DirectMessage[]>([]);
+  const [users, setUsers] = useState<ChatUser[]>([]);
+  const [currentChat, setCurrentChat] = useState<ChatListItem | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // 사용자가 선택해서 활성화한 채팅방의 ID 를 보관함.
+  // 리랜더링이 되어서 값이 갱신되거나, 화면에 보여줄 필요는 없음.
+  const currentChatId = useRef<string | null>(null);
+
+  // 공통 기능 함수
+  // 에러 메시지 전용 함수
+  const handleError = useCallback((errorMessage: string) => {
+    setError(errorMessage);
+  }, []);
+
+  // 액션들
+  // 채팅방 목록 가져오기 : 내가 참여한 목록
+  const loadChats = useCallback(async () => {
+    try {
+      // 채팅방 목록 로드 시에는 전역 로딩 상태를 사용하지 않음 (사용자 경험 개선)
+      const response = await getChatList();
+      if (response.success && response.data) {
+        setChats(response.data); // 목록담기
+      } else {
+        handleError(response.error || '채팅방 목록을 불러올 수 없습니다.');
+      }
+    } catch (err) {
+      handleError('채팅방 목록 로드 중 오류가 발생했습니다.');
+    }
+  }, [handleError]);
+
+  // 선택된 채팅방의 모든 메시지 가져오기
+  const loadMessages = useCallback(
+    async (chatId: string) => {
+      try {
+        // 메시지 로드 시에는 전역 로딩 상태를 사용하지 않음 (사용자 경험 개선)
+
+        // 현재 활성화된 채팅방 ID 보관
+        currentChatId.current = chatId;
+
+        // 현재 채팅방 정보 찾기
+        const chatInfo = chats.find(chat => chat.id === chatId);
+        if (chatInfo) {
+          setCurrentChat(chatInfo);
+        }
+
+        const response = await getMessages(chatId);
+        if (response.success && response.data) {
+          setMessages(response.data);
+        } else {
+          handleError(response.error || '메시지를 불러올 수 없습니다.');
+        }
+      } catch (err) {
+        handleError('메시지 로드 중 오류가 발생했습니다.');
+      }
+    },
+    [handleError, chats],
+  );
+
+  const sendMessage = useCallback(
+    async (messageData: CreateMessageData) => {
+      try {
+        // 메시지 전송 시에는 전역 로딩 상태를 사용하지 않음 (사용자 경험 개선)
+        const response = await sendMessageService(messageData);
+        if (response.success && response.data) {
+          // 메시지 전송 성공 후 즉시 로컬 상태에 메시지 추가 (자연스러운 UX)
+          setMessages(prev => [...prev, response.data!]);
+
+          // 백그라운드에서 데이터 동기화 (사용자에게 방해되지 않음)
+          setTimeout(async () => {
+            await loadMessages(messageData.chat_id);
+            await loadChats();
+          }, 100);
+
+          return true;
+        } else {
+          handleError(response.error || '메시지 전송에 실패했습니다.');
+          return false;
+        }
+      } catch (err) {
+        handleError('메시지 전송 중 오류가 발생했습니다.');
+        return false;
+      }
+    },
+    [handleError, loadChats, loadMessages],
+  );
+
+  // 검색어로 사용자 목록 출력
+  const searchUsers = useCallback(
+    async (searchTerm: string) => {
+      try {
+        setLoading(true);
+        const response = await searchUsersService(searchTerm);
+        if (response.success && response.data) {
+          setUsers(response.data);
+        } else {
+          handleError(response.error || '사용자 검색에 실패했습니다.');
+        }
+      } catch (err) {
+        handleError('사용자 검색 중 오류가 발생했습니다.');
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleError],
+  );
+
+  // 채팅방 생성 또는 있으면 선택
+  const createDirectChat = useCallback(
+    async (participantId: string): Promise<string | null> => {
+      try {
+        setLoading(true);
+        const response = await findOrCreateDirectChat(participantId);
+
+        if (response.success && response.data) {
+          // 채팅방 새로 고침으로 목록 갱신
+          await loadChats();
+          return response.data.id; // 새 채팅ID 를 전달한 이유는 즉시 채팅방 참여
+        } else {
+          handleError(response.error || '채팅방 생성에 실패했습니다.');
+          return null;
+        }
+      } catch (err) {
+        handleError('채팅방 생성 중 오류가 발생했습니다.');
+        return null;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleError, loadChats],
+  );
+
+  // 채팅방 나가기
+  const exitDirectChatHandler = useCallback(
+    async (chatId: string): Promise<boolean> => {
+      try {
+        setLoading(true);
+        const response = await exitDirectChat(chatId);
+        if (response.success) {
+          // 채팅방 목록에서 제거
+          setChats(prev => prev.filter(chat => chat.id !== chatId));
+          // 현재 채팅방이 나간 채팅방이면 초기화
+          if (currentChatId.current === chatId) {
+            currentChatId.current = null;
+            setCurrentChat(null);
+            setMessages([]);
+          }
+          return true;
+        } else {
+          handleError(response.error || '채팅방 나가기에 실패했습니다.');
+          return false;
+        }
+      } catch (err) {
+        handleError('채팅방 나가기 중 오류가 발생했습니다.');
+        return false;
+      } finally {
+        setLoading(false);
+      }
+    },
+    [handleError],
+  );
+
+  // 에러메시지 초기화
+  const clearError = useCallback(() => {
+    setError(null);
+  }, []);
+
+  // Context 의 value
+  const value: DirectChatContextType = {
+    // 상태(state)
+    chats,
+    messages,
+    users,
+    currentChat,
+    loading,
+    error,
+    // 액션 (action) : 샹태관리 업데이트 함수
+    loadChats,
+    loadMessages,
+    sendMessage,
+    searchUsers,
+    createDirectChat,
+    exitDirectChat: exitDirectChatHandler,
+    clearError,
+  };
+  return <DirectChatContext.Provider value={value}>{children}</DirectChatContext.Provider>;
+};
+
+// 커스텀 훅
+export const useDirectChat = () => {
+  const context = useContext(DirectChatContext);
+  if (!context) {
+    throw new Error('채팅 컨텐스트가 생성되지 않았습니다.');
+  }
+  return context;
+};
+```
+
 ## 4. DirectChatList.tsx 업데이트
 
-- /src/components/chat/DirectChatList.tsx
+- /src/components/chat/direct/DirectChatList.tsx
 
-- Realtime 적용법 체크해보기
+- Realtime 적용법 체크 해보기
 
 ```tsx
 // Supabase Realtime 으로 실시간 동기화
@@ -861,4 +1120,4 @@ export default DirectChatList;
 
 ## 5. DirectChatRoom.tsx 업데이트
 
-- /src/components/chat/DirectChatRoom.tsx
+- /src/components/chat/direct/DirectChatRoom.tsx

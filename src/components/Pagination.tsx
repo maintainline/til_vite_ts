@@ -77,12 +77,13 @@ const Pagination = ({
     <div className="pagination-container">
       {/* 페이지 정보 */}
       <div className="pagination-info">
-        총<span className="pagination-count"> {totalCount}</span>개 중{' '}
+        총 <span className="pagination-count">{totalCount}</span>개 중{' '}
         <span className="pagination-range">
           {startItem} ~ {endItem}
         </span>
         개 표시
       </div>
+
       {/* 페이지 번호들 */}
       <div className="pagination-controls">
         <button
