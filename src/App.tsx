@@ -21,7 +21,7 @@ const TopBar = () => {
   const { signOut, user } = useAuth();
   // 관리자인 경우 메뉴 추가로 출력하기
   // isAdmin 에는 true/false
-  const isAdmin = user?.email === 'tarolong@naver.com';
+  const isAdmin = user?.email === 'wldjsjiun@naver.com';
 
   return (
     <nav className="nav">
@@ -79,7 +79,7 @@ function App() {
       <AuthProvider>
         <div className="container">
           <div className="page-header">
-            <h1 className="page-title">👩‍🦰 Todo Service</h1>
+            <h1 className="page-title">⚾ Todo Service</h1>
           </div>
           <Router
             future={{

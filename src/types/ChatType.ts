@@ -1,6 +1,6 @@
 // 1 : 1 채팅을 위한 타입
 
-// 채팅 사용자 장보
+// 채팅 사용자 정보
 export interface ChatUser {
   id: string; // 사용자 고유 식별자 (UUID)
   email?: string; // 사용자 이메일 주소

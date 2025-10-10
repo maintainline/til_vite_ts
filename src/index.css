@@ -57,7 +57,7 @@ a.btn:focus {
 }
 
 /* ===== List Styles ===== */
-/* 통상 ul 은 모양없이 진행함. */
+/* 통상 ul 은 모양없이 진행함 */
 /* ol 은 order List 로서 순서가 있는 목록 */
 ul,
 li {
@@ -844,7 +844,7 @@ textarea:focus {
   outline: none !important;
 }
 
-/* ===== PageNation Styles ===== */
+/* ===== PagiNation Styles ===== */
 .pagination-container {
   display: 'flex';
   align-items: 'center';

@@ -208,7 +208,6 @@ export async function getChatList(): Promise<ChatApiResponse<ChatListItem[]>> {
           }
         } catch (error) {
           // 오류 시 0 유지
-          unreadCount = 0;
         }
 
         return {
@@ -219,7 +218,7 @@ export async function getChatList(): Promise<ChatApiResponse<ChatListItem[]>> {
                 content: lastMessage.content,
                 created_at: lastMessage.created_at,
                 sender_nickname:
-                  lastMessage.sender_id === currentUser.id ? '나' : otherUserInfo.nickname,
+                  lastMessage.sender_id === currentUser.id ? '재또지' : otherUserInfo.nickname,
               }
             : undefined,
           unread_count: unreadCount || 0,
