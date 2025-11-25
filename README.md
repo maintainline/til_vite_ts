@@ -521,7 +521,8 @@ function Left_2() {
       <h1>Left_2 좋아요 : {like}</h1>
       <div>
         <Left_3 />
-      </div>
+
+</div>
     </div>
   );
 }
